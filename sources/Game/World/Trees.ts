@@ -5,7 +5,18 @@ import { color, uniform } from 'three/tsl'
 
 export class Trees
 {
-    constructor(name, visual, references, colorA, colorB)
+    private game: Game
+
+    private visual: THREE.Object3D
+    private references: THREE.Object3D[]
+    private colorA: string
+    private colorB: string
+    private modelParts: { leaves: THREE.Mesh[], body: THREE.Mesh | null }
+    private bodies: THREE.InstancedMesh
+    private leaves: Foliage
+    private debugPanel: any
+
+    constructor(name: string, visual: THREE.Object3D, references: THREE.Object3D[], colorA: string, colorB: string)
     {
         this.game = Game.getInstance()
 
@@ -29,25 +40,24 @@ export class Trees
         this.setPhysical()
     }
 
-    setModelParts()
+    setModelParts(): void
     {
-        this.modelParts = {}
-        this.modelParts.leaves = []
-        this.modelParts.body = null
+        this.modelParts = { leaves: [], body: null }
         
-        this.visual.traverse((_child) =>
+        this.visual.traverse((_child: THREE.Object3D) =>
         {
-            if(_child.isMesh)
+            if((_child as THREE.Mesh).isMesh)
             {
-                if(_child.name.startsWith('treeLeaves'))
-                    this.modelParts.leaves.push(_child)
-                else if(_child.name.startsWith('treeBody'))
-                    this.modelParts.body = _child
+                const mesh = _child as THREE.Mesh
+                if(mesh.name.startsWith('treeLeaves'))
+                    this.modelParts.leaves.push(mesh)
+                else if(mesh.name.startsWith('treeBody'))
+                    this.modelParts.body = mesh
             }
         })
     }
 
-    setBodies()
+    setBodies(): void
     {
         this.game.materials.updateObject(this.modelParts.body)
         this.bodies = new THREE.InstancedMesh(this.modelParts.body.geometry, this.modelParts.body.material, this.references.length)
@@ -65,9 +75,9 @@ export class Trees
         this.game.scene.add(this.bodies)
     }
 
-    setLeaves()
+    setLeaves(): void
     {
-        const references = []
+        const references: THREE.Object3D[] = []
         
         for(const treeReference of this.references)
         {
@@ -97,7 +107,7 @@ export class Trees
         }
     }
 
-    setPhysical()
+    setPhysical(): void
     {
         for(const treeReference of this.references)
         {
@@ -110,7 +120,7 @@ export class Trees
                     friction: 0.7,
                     sleeping: true,
                     colliders: [ { shape: 'cylinder', parameters: [ 2.5, 0.15 ], category: 'object' } ],
-                    onCollision: (force, position) =>
+                    onCollision: (force: number, position: THREE.Vector3) =>
                     {
                         this.game.audio.groups.get('hitDefault').playRandomNext(force, position)
                     }
