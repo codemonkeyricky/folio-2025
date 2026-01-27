@@ -1,12 +1,43 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
-import { color, float, Fn, hash, instancedArray, instanceIndex, materialNormal, max, mix, mod, modelViewMatrix, normalWorld, positionGeometry, remapClamp, rotateUV, sin, smoothstep, step, texture, uniform, vec2, vec3, vec4 } from 'three/tsl'
+import { color, float, Fn, hash, instancedArray, instanceIndex, materialNormal, max, mix, mod, modelViewMatrix, normalWorld, positionGeometry, remapClamp, rotateUV, sin, step, texture, uniform, vec2, vec3, vec4 } from 'three/tsl'
 import { remap } from '../utilities/maths.js'
 import gsap from 'gsap'
 import { MeshDefaultMaterial } from '../Materials/MeshDefaultMaterial.js'
 
 export class Leaves
 {
+    game: Game
+    count: number
+    geometry!: THREE.PlaneGeometry
+    material!: MeshDefaultMaterial
+    mesh!: THREE.Mesh<THREE.PlaneGeometry, MeshDefaultMaterial>
+    size!: ReturnType<typeof float>
+    positionBuffer!: ReturnType<typeof instancedArray>
+    velocityBuffer!: ReturnType<typeof instancedArray>
+    baseRotationBuffer!: ReturnType<typeof instancedArray>
+    scaleBuffer!: ReturnType<typeof instancedArray>
+    weightBuffer!: ReturnType<typeof instancedArray>
+    normalBuffer!: ReturnType<typeof instancedArray>
+    updateCompute!: ReturnType<ReturnType<typeof Fn>['compute']>
+    debugPanel!: any
+    focusPoint!: ReturnType<typeof uniform>
+    vehicleVelocity!: ReturnType<typeof uniform>
+    vehiclePosition!: ReturnType<typeof uniform>
+    scale!: ReturnType<typeof uniform>
+    rotationFrequency!: ReturnType<typeof uniform>
+    rotationElevationMultiplier!: ReturnType<typeof uniform>
+    pushSidewaysMultiplier!: ReturnType<typeof uniform>
+    pushMultiplier!: ReturnType<typeof uniform>
+    windFrequency!: ReturnType<typeof uniform>
+    windMultiplier!: ReturnType<typeof uniform>
+    upwardMultiplier!: ReturnType<typeof uniform>
+    defaultDamping!: ReturnType<typeof uniform>
+    waterDamping!: ReturnType<typeof uniform>
+    gravity!: ReturnType<typeof uniform>
+    explosion!: ReturnType<typeof uniform>
+    tornado!: ReturnType<typeof uniform>
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -79,19 +110,19 @@ export class Leaves
         const baseRotationArray = new Float32Array(this.count)
         for(let i = 0; i < this.count; i++)
             baseRotationArray[i] = Math.random() * Math.PI * 2
-        const baseRotationBuffer = instancedArray(baseRotationArray, 'float').toAttribute()
+        this.baseRotationBuffer = instancedArray(baseRotationArray, 'float').toAttribute()
         
         // Scale
         const scaleArray = new Float32Array(this.count)
         for(let i = 0; i < this.count; i++)
             scaleArray[i] = Math.random() * 0.5 + 0.5
-        const scaleBuffer = instancedArray(scaleArray, 'float').toAttribute()
+        this.scaleBuffer = instancedArray(scaleArray, 'float').toAttribute()
         
         // Weight
         const weightArray = new Float32Array(this.count)
         for(let i = 0; i < this.count; i++)
             weightArray[i] = Math.random() * 0.1 + 0.1
-        const weightBuffer = instancedArray(weightArray, 'float')
+        this.weightBuffer = instancedArray(weightArray, 'float')
 
         // Color buffer
         const colorA = uniform(color(0x95513a))// 0x999257
@@ -111,7 +142,7 @@ export class Leaves
             normal.applyAxisAngle(new THREE.Vector3(0, 0, 1), (Math.random() - 0.5) * 2)
             normal.toArray(normalArray, i * 3)
         }
-        const normalBuffer = instancedArray(normalArray, 'vec3').toAttribute()
+        this.normalBuffer = instancedArray(normalArray, 'vec3').toAttribute()
 
         this.material = new MeshDefaultMaterial({
             side: THREE.DoubleSide,
@@ -139,7 +170,7 @@ export class Leaves
             
             const rotationZ = sin(leavePosition.x.mul(this.rotationFrequency)).mul(rotationMultiplier)
             const rotationX = sin(leavePosition.z.mul(this.rotationFrequency)).mul(rotationMultiplier)
-            const rotationY = baseRotationBuffer
+            const rotationY = this.baseRotationBuffer
 
             newPosition.xy.assign(rotateUV(newPosition.xy, rotationZ, vec2(0)))
             newPosition.yz.assign(rotateUV(newPosition.yz, rotationX, vec2(0)))
@@ -175,7 +206,7 @@ export class Leaves
         {
             const position = this.positionBuffer.element(instanceIndex)
             const velocity = this.velocityBuffer.element(instanceIndex)
-            const weight = weightBuffer.element(instanceIndex)
+            const weight = this.weightBuffer.element(instanceIndex)
 
             // Terrain
             // const terrainUv = this.game.terrain.worldPositionToUvNode(position.xz)
@@ -287,7 +318,7 @@ export class Leaves
         this.game.scene.add(this.mesh)
     }
 
-    explode(coordinates, radius)
+    explode(coordinates: { x: number, z: number }, radius: number)
     {
         this.explosion.value.x = coordinates.x // X
         this.explosion.value.y = coordinates.z // Z
