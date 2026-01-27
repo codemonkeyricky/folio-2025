@@ -8,6 +8,58 @@ import { boxBlur } from 'three/examples/jsm/tsl/display/boxBlur.js'
 
 export class WaterSurface
 {
+    game!: Game
+    hasRipples!: boolean
+    hasIce!: boolean
+    hasSplashes!: boolean
+    debugPanel!: any
+    ripplesDebugPanel!: any
+    iceDebugPanel!: any
+    splashesDebugPanel!: any
+    shoreDebugPanel!: any
+    blurDebugPanel!: any
+    geometry!: THREE.PlaneGeometry
+    ripplesRatio!: ReturnType<typeof uniform>
+    ripplesSlopeFrequency!: ReturnType<typeof uniform>
+    ripplesNoiseFrequency!: ReturnType<typeof uniform>
+    ripplesNoiseOffset!: ReturnType<typeof uniform>
+    ripplesRatioBinding!: any
+    ripplesNode!: ReturnType<typeof Fn>
+    iceRatio!: ReturnType<typeof uniform>
+    iceNoiseFrequency!: ReturnType<typeof uniform>
+    iceRatioBinding!: any
+    iceNode!: ReturnType<typeof Fn>
+    splashesRatio!: ReturnType<typeof uniform>
+    splashesNoiseFrequency!: ReturnType<typeof uniform>
+    splashesTimeFrequency!: ReturnType<typeof uniform>
+    splashesThickness!: ReturnType<typeof uniform>
+    splashesEdgeAttenuationLow!: ReturnType<typeof uniform>
+    splashesEdgeAttenuationHigh!: ReturnType<typeof uniform>
+    splashesRatioBinding!: any
+    splashesNode!: ReturnType<typeof Fn>
+    shoreEdge!: ReturnType<typeof uniform>
+    shoreNode!: ReturnType<typeof Fn>
+    detailsMask!: () => ReturnType<typeof Fn>
+    blurStrength!: ReturnType<typeof uniform>
+    blurOutputNode!: ReturnType<typeof Fn>
+    material!: MeshDefaultMaterial
+    mesh!: THREE.Mesh<THREE.PlaneGeometry, MeshDefaultMaterial>
+    ice!: {
+        halfThickness: number
+        physical: {
+            type: string
+            position: THREE.Vector3
+            frictionRule: string
+            friction: number
+            enabled: boolean
+            colliders: Array<{ shape: string, parameters: number[] }>
+            body: {
+                isEnabled: () => boolean
+                setFriction: (friction: number) => void
+                setNextKinematicTranslation: (position: { x: number, y: number, z: number }) => void
+            }
+        }
+    }
     constructor()
     {
         this.game = Game.getInstance()
@@ -270,17 +322,17 @@ export class WaterSurface
         /**
          * Blur Output
          */
-         const blurStrength = uniform(0.01)
+          const blurStrength = uniform(0.01)
 
-         this.blurOutputNode = Fn(() =>
-         {
-            const blurOutput = boxBlur(viewportSharedTexture(screenUV), {
-				size: 1.5,
-				separation: 3
-			}).rgb
+          this.blurOutputNode = Fn(() =>
+          {
+             const blurOutput = boxBlur(viewportSharedTexture(screenUV), {
+ 				size: 1.5,
+ 				separation: 3
+ 			}).rgb
 
-            return vec3(blurOutput)
-         })
+             return vec3(blurOutput)
+          })
 
         // Debug
         if(this.game.debug.active)
@@ -321,7 +373,7 @@ export class WaterSurface
         })()
 
         // Quality
-        const qualityChange = (level) =>
+        const qualityChange = (level: number) =>
         {
             if(level === 0)
             {
