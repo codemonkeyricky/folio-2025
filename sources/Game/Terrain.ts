@@ -3,17 +3,30 @@ import { Game } from './Game.js'
 import MeshGridMaterial, { MeshGridMaterialLine } from './Materials/MeshGridMaterial.js'
 import { color, Fn, mix, round, smoothstep, texture, uniform, uv, vec2 } from 'three/tsl'
 
-export class Terrain
-{
-    constructor()
-    {
+export class Terrain {
+    game: Game
+
+    subdivision: number
+    size: number
+    debugPanel: any
+
+    gradientTexture: THREE.Texture
+    colors: Array<{ stop: number, value: string }>
+
+    grassColorUniform: ReturnType<typeof uniform<typeof color>>
+    tracksDelta: ReturnType<typeof uniform<typeof vec2>>
+
+    worldPositionToUvNode: Fn<[vec2], vec2>
+    terrainNode: Fn<[vec2], ReturnType<typeof texture>>
+    colorNode: Fn<[ReturnType<typeof texture>], ReturnType<typeof color>>
+
+    constructor() {
         this.game = Game.getInstance()
 
         this.subdivision = 128
         this.size = 192
 
-        if(this.game.debug.active)
-        {
+        if (this.game.debug.active) {
             this.debugPanel = this.game.debug.panel.addFolder({
                 title: '🏔️ Terrain Data',
                 expanded: false,
@@ -23,14 +36,12 @@ export class Terrain
         this.setGradient()
         this.setNodes()
 
-        this.game.ticker.events.on('tick', () =>
-        {
+        this.game.ticker.events.on('tick', () => {
             this.update()
         }, 10)
     }
 
-    setGradient()
-    {
+    setGradient() {
         const height = 16
 
         const canvas = document.createElement('canvas')
@@ -40,7 +51,7 @@ export class Terrain
         this.gradientTexture = new THREE.Texture(canvas)
         this.gradientTexture.colorSpace = THREE.SRGBColorSpace
 
-        const context = canvas.getContext('2d')
+        const context = canvas.getContext('2d')!
 
         this.colors = [
             { stop: 0.1, value: '#ffa94e' },
@@ -48,10 +59,9 @@ export class Terrain
             { stop: 0.9, value: '#13375f' },
         ]
 
-        const update = () =>
-        {
+        const update = () => {
             const gradient = context.createLinearGradient(0, 0, 0, height)
-            for(const color of this.colors)
+            for (const color of this.colors)
                 gradient.addColorStop(color.stop, color.value)
 
             context.fillStyle = gradient
@@ -69,29 +79,24 @@ export class Terrain
         // canvas.style.width = '128px'
         // canvas.style.height = `256px`
         // document.body.append(canvas)
-        
-        if(this.game.debug.active)
-        {
-            for(const color of this.colors)
-            {
+
+        if (this.game.debug.active) {
+            for (const color of this.colors) {
                 this.debugPanel.addBinding(color, 'stop', { min: 0, max: 1, step: 0.001 }).on('change', update)
                 this.debugPanel.addBinding(color, 'value', { view: 'color' }).on('change', update)
             }
         }
     }
 
-    setNodes()
-    {
+    setNodes() {
         this.grassColorUniform = uniform(color('#b8b62e'))
         this.tracksDelta = uniform(vec2(0))
 
-        const worldPositionToUvNode = Fn(([position]) =>
-        {
+        const worldPositionToUvNode = Fn(([position]) => {
             return position.div(this.subdivision).div(1.5).add(0.5)
         })
 
-        this.terrainNode = Fn(([position]) =>
-        {
+        this.terrainNode = Fn(([position]) => {
             const textureUv = worldPositionToUvNode(position)
             const data = texture(this.game.resources.terrainTexture, textureUv)
 
@@ -104,9 +109,8 @@ export class Terrain
 
             return data
         })
-        
-        this.colorNode = Fn(([terrainData]) =>
-        {
+
+        this.colorNode = Fn(([terrainData]) => {
             // Dirt and water
             const baseColor = texture(this.gradientTexture, vec2(0, terrainData.b.oneMinus()))
 
@@ -116,14 +120,12 @@ export class Terrain
             return baseColor.rgb
         })
 
-        if(this.game.debug.active)
-        {
-            this.game.debug.addThreeColorBinding(this.debugPanel, this.grassColorUniform.value, 'grassColor')
+        if (this.game.debug.active) {
+            this.game.debug.addThreeColorBinding(this.debugPanel, this.grassColorUniform.value as any, 'grassColor')
         }
     }
-    
-    update()
-    {
+
+    update() {
         // Tracks delta
         this.tracksDelta.value.set(
             this.game.tracks.focusPoint.x,
