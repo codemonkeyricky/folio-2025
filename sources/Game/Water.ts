@@ -1,10 +1,14 @@
 import { uniform } from 'three/tsl'
 import { Game } from './Game.js'
 
-export class Water
-{
-    constructor()
-    {
+export class Water {
+    game: Game
+    surfaceElevation: number
+    depthElevation: number
+    surfaceElevationUniform: ReturnType<typeof uniform>
+    surfaceThicknessUniform: ReturnType<typeof uniform>
+
+    constructor() {
         this.game = Game.getInstance()
 
         this.surfaceElevation = -0.3
@@ -14,8 +18,7 @@ export class Water
         this.surfaceThicknessUniform = uniform(0.013)
 
         // Debug
-        if(this.game.debug.active)
-        {
+        if (this.game.debug.active) {
             const debugPanel = this.game.debug.panel.addFolder({
                 title: '💧 Water',
                 expanded: false,
@@ -25,3 +28,4 @@ export class Water
         }
     }
 }
+
