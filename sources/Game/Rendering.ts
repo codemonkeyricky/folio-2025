@@ -1,12 +1,24 @@
 import * as THREE from 'three/webgpu'
-import { pass, mrt, output, emissive, renderOutput, vec4 } from 'three/tsl'
+import { pass, renderOutput } from 'three/tsl'
 import { bloom } from 'three/addons/tsl/display/BloomNode.js'
 import { Game } from './Game.js'
-import { cheapDOF } from './Passes/cheapDOF.js'
 import { Inspector } from 'three/addons/inspector/Inspector.js'
+import { cheapDOF } from './Passes/cheapDOF.js'
+
+declare module './Passes/cheapDOF.js' {
+    const cheapDOF: any
+}
 
 export class Rendering
 {
+    game: Game
+    debugPanel: any
+    renderer!: THREE.WebGPURenderer
+    postProcessing!: THREE.PostProcessing
+    bloomPass: any
+    cheapDOFPass: any
+    stats: any
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -20,7 +32,7 @@ export class Rendering
         }
     }
 
-    start()
+    start(): void
     {
         this.setStats()
 
@@ -35,7 +47,7 @@ export class Rendering
         })
     }
 
-    async setRenderer()
+    async setRenderer(): Promise<THREE.WebGPURenderer>
     {
         this.renderer = new THREE.WebGPURenderer({ canvas: this.game.canvasElement, powerPreference: 'high-performance', forceWebGL: false, antialias: this.game.viewport.ratio < 2 })
         this.renderer.setSize(this.game.viewport.width, this.game.viewport.height)
@@ -43,12 +55,11 @@ export class Rendering
         this.renderer.sortObjects = true
         this.renderer.domElement.classList.add('experience')
         this.renderer.shadowMap.enabled = true
-        // this.renderer.shadowMap.type = THREE.PCFSoftShadowMap
-        this.renderer.setOpaqueSort((a, b) =>
+        this.renderer.setOpaqueSort((a: any, b: any) =>
         {
             return a.renderOrder - b.renderOrder
         })
-        this.renderer.setTransparentSort((a, b) =>
+        this.renderer.setTransparentSort((a: any, b: any) =>
         {
             return a.renderOrder - b.renderOrder
         })
@@ -58,8 +69,7 @@ export class Rendering
             this.renderer.inspector = new Inspector()
         }
 
-        // Make the renderer control the ticker
-        this.renderer.setAnimationLoop((elapsedTime) => { this.game.ticker.update(elapsedTime) })
+        this.renderer.setAnimationLoop((elapsedTime: number) => { this.game.ticker.update(elapsedTime) })
 
         return this.renderer
             .init()
@@ -81,7 +91,7 @@ export class Rendering
         this.cheapDOFPass = cheapDOF(renderOutput(scenePass))
 
         // Quality
-        const qualityChange = (level) =>
+        const qualityChange = (level: number) =>
         {
             if(level === 0)
             {
