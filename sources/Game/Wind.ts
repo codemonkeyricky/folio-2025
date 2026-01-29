@@ -2,9 +2,19 @@ import { vec2, Fn, texture, uniform } from 'three/tsl'
 import { Game } from './Game.js'
 import { remapClamp } from './utilities/maths.js'
 
-
 export class Wind
 {
+    game: Game
+    debugPanel?: any
+    angle: number
+    direction: ReturnType<typeof uniform>
+    positionFrequency: ReturnType<typeof uniform>
+    strength: ReturnType<typeof uniform>
+    localTime: ReturnType<typeof uniform>
+    timeFrequency: number
+    offsetNode: ReturnType<typeof Fn>
+    strengthBinding: any
+
     constructor()
     {
         this.game = Game.getInstance()
