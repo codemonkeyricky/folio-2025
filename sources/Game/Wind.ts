@@ -1,6 +1,6 @@
 import { vec2, Fn, texture, uniform } from 'three/tsl'
 import { Game } from './Game.js'
-import { remapClamp } from './utilities/maths.js'
+import { remapClamp } from './utilities/maths.ts'
 
 export class Wind {
     game: Game

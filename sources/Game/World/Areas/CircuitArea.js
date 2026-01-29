@@ -1,6 +1,6 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../../Game.js'
-import { lerp, segmentCircleIntersection } from '../../utilities/maths.js'
+import { lerp, segmentCircleIntersection } from '../../utilities/maths.ts'
 import { InteractivePoints } from '../../InteractivePoints.js'
 import gsap from 'gsap'
 import { Player } from '../../Player.js'

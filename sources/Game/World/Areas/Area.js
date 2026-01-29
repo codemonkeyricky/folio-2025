@@ -2,7 +2,7 @@ import * as THREE from 'three/webgpu'
 import { Events } from '../../Events.js'
 import { Game } from '../../Game.js'
 import { References } from '../../References.js'
-import { circleIntersectsPolygon } from '../../utilities/maths.js'
+import { circleIntersectsPolygon } from '../../utilities/maths.ts'
 
 export class Area
 {
