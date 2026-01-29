@@ -20,27 +20,27 @@ import { Intro } from './Intro.js'
 
 
 export class World {
-    game: Game
-    intro: Intro
-    visualVehicle: VisualVehicle
-    floor: Floor
-    waterSurface: WaterSurface
-    grass: Grass
-    windLines: WindLines
-    confetti: Confetti
-    leaves: Leaves
-    rain: RainLines
-    lightnings: Lightnings
-    fireballs: Fireballs
-    snow: Snow
-    visualTornado: VisualTornado
-    bushes: Bushes
-    birchTrees: Trees
-    oakTrees: Trees
-    cherryTrees: Trees
-    flowers: Flowers
-    bricks: Bricks
-    whispers: Whispers
+    game!: Game
+    intro!: Intro
+    visualVehicle!: VisualVehicle
+    floor!: Floor
+    waterSurface!: WaterSurface
+    grass!: Grass
+    windLines!: WindLines
+    confetti!: Confetti
+    leaves!: Leaves
+    rain!: RainLines
+    lightnings!: Lightnings
+    fireballs!: Fireballs
+    snow!: Snow
+    visualTornado!: VisualTornado
+    bushes!: Bushes
+    birchTrees!: Trees
+    oakTrees!: Trees
+    cherryTrees!: Trees
+    flowers!: Flowers
+    bricks!: Bricks
+    whispers!: Whispers
 
     constructor() {
         this.game = Game.getInstance()
@@ -50,26 +50,26 @@ export class World {
     step(step: number): void {
         if (step === 0) {
             // this.grid = new Grid()
-            this.intro = new Intro()
+            this.intro = new Intro(this.game)
         }
         else if (step === 1) {
             this.visualVehicle = new VisualVehicle(this.game.resources.vehicle.scene)
-            this.floor = new Floor()
-            this.waterSurface = new WaterSurface()
-            this.grass = new Grass()
-            this.windLines = new WindLines()
-            this.confetti = new Confetti()
-            this.leaves = new Leaves()
-            this.rain = new RainLines()
-            this.lightnings = new Lightnings()
-            this.fireballs = new Fireballs()
-            this.snow = new Snow()
-            this.visualTornado = new VisualTornado()
-            this.bushes = new Bushes()
-            this.birchTrees = new Trees('Birch Tree', this.game.resources.birchTreesVisualModel.scene, this.game.resources.birchTreesReferencesModel.scene.children, '#ff4f2b', '#ff903f')
-            this.oakTrees = new Trees('Oak Tree', this.game.resources.oakTreesVisualModel.scene, this.game.resources.oakTreesReferencesModel.scene.children, '#b4b536', '#d8cf3b')
-            this.cherryTrees = new Trees('Cherry Tree', this.game.resources.cherryTreesVisualModel.scene, this.game.resources.cherryTreesReferencesModel.scene.children, '#ff6d6d', '#ff9990')
-            this.flowers = new Flowers()
+            this.floor = new Floor(this.game)
+            this.waterSurface = new WaterSurface(this.game)
+            this.grass = new Grass(this.game)
+            this.windLines = new WindLines(this.game)
+            this.confetti = new Confetti(this.game)
+            this.leaves = new Leaves(this.game)
+            this.rain = new RainLines(this.game)
+            this.lightnings = new Lightnings(this.game)
+            this.fireballs = new Fireballs(this.game)
+            this.snow = new Snow(this.game)
+            this.visualTornado = new VisualTornado(this.game)
+            this.bushes = new Bushes(this.game)
+            this.birchTrees = new Trees('Birch Tree', this.game.resources.birchTreesVisualModel.scene, this.game.resources.birchTreesReferencesModel.scene.children, '#ff4f2b', '#ff903f', this.game)
+            this.oakTrees = new Trees('Oak Tree', this.game.resources.oakTreesVisualModel.scene, this.game.resources.oakTreesReferencesModel.scene.children, '#b4b536', '#d8cf3b', this.game)
+            this.cherryTrees = new Trees('Cherry Tree', this.game.resources.cherryTreesVisualModel.scene, this.game.resources.cherryTreesReferencesModel.scene.children, '#ff6d6d', '#ff9990', this.game)
+            this.flowers = new Flowers(this.game)
             // this.bricks = new Bricks()
             // this.fences = new Fences()
             // this.benches = new Benches()
@@ -80,7 +80,7 @@ export class World {
             // this.areas = new Areas()
         }
         else if (step === 2) {
-            this.whispers = new Whispers()
+            this.whispers = new Whispers(this.game)
         }
     }
 }

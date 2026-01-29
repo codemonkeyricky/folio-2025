@@ -1,4 +1,4 @@
-import * as THREE from 'three/webgpu'
+import * as THREE from 'three'
 import { color, uniform, vec2 } from 'three/tsl'
 import { Game } from './Game.js'
 import gsap from 'gsap'
