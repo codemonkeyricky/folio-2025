@@ -1,8 +1,16 @@
 import { uniform } from 'three/tsl'
 import { Game } from './Game.js'
+import { Pane } from 'tweakpane'
 
 export class Water
 {
+    game: Game
+    surfaceElevation: number
+    depthElevation: number
+    surfaceElevationUniform: ReturnType<typeof uniform>
+    surfaceThicknessUniform: ReturnType<typeof uniform>
+    debugPanel: Pane | undefined
+
     constructor()
     {
         this.game = Game.getInstance()
