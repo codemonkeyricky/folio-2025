@@ -5,6 +5,8 @@ import topLevelAwait from 'vite-plugin-top-level-await'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import { defineConfig } from 'vite'
+import { resolve } from 'path'
+import typescript from 'typescript'
 
 export default defineConfig({
     root: 'sources/', // Sources files (typically where index.html is)
@@ -25,6 +27,29 @@ export default defineConfig({
     },
     plugins:
     [
+        {
+            name: 'vite-ts-transform',
+            transform(code, id) {
+                if (id.endsWith('.ts') && !id.includes('node_modules')) {
+                    try {
+                        const result = typescript.transform(code, [], {}, {
+                            module: 'ES2020',
+                            moduleResolution: 'node',
+                            target: 'ES2020',
+                            strict: true,
+                            esModuleInterop: true,
+                            skipLibCheck: true
+                        })
+                        return {
+                            code: result.code,
+                            map: result.map
+                        }
+                    } catch (e) {
+                        console.error(`Error compiling ${id}:`, e)
+                    }
+                }
+            }
+        },
         wasm(),
         topLevelAwait(),
         restart({ restart: [ '../static/**', ] }), // Restart server on static file change
@@ -36,6 +61,11 @@ export default defineConfig({
             compilerOptions: {
                 strict: true
             }
+        }
+    },
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'sources')
         }
     }
 })

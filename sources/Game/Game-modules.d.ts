@@ -59,7 +59,7 @@ declare module './Game.js' {
     const module: any
     export default module
 }
-declare module './Geometries/LineGeometry.js' {
+declare module './Geometries/LineGeometry.ts' {
     const module: any
     export default module
 }
