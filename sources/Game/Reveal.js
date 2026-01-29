@@ -53,7 +53,7 @@ export class Reveal
             // If distance is already large (skip reveal), show everything immediately
             if(this.distance.value >= 99999) {
                 // Skip circle hide animation, show grid immediately
-                this.game.world.grid.show()
+                // this.game.world.grid.show()
 
                 // Label and sound button
                 this.game.world.intro.setText()
