@@ -37,8 +37,7 @@ export class Wind
         this.localTime = uniform(0)
         this.timeFrequency = 0.1
         
-        this.offsetNode = Fn(([position]) => 
-        {
+        this.offsetNode = Fn(([position]: any) => {
             const remapedPosition = position.mul(this.positionFrequency)
 
             const noiseUv1 = remapedPosition.xy.mul(0.2).add(this.direction.mul(this.localTime)).xy
