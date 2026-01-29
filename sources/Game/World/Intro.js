@@ -54,8 +54,8 @@ export class Intro
         
         const radius = 3.5
         const thickness = 0.04
-        this.circle.progress = 0
-        this.circle.smoothedProgress = uniform(0)
+        this.circle.progress = 1
+        this.circle.smoothedProgress = uniform(1)
 
         // Geometry
         const geometry = new THREE.RingGeometry(radius - thickness, radius, 128, 1)
@@ -67,7 +67,7 @@ export class Intro
             const angle = atan(positionGeometry.y, positionGeometry.x)
             const angleProgress = angle.div(PI2).add(0.5).oneMinus()
 
-            this.circle.smoothedProgress.lessThan(angleProgress).discard()
+            // this.circle.smoothedProgress.lessThan(angleProgress).discard()
 
             return vec4(this.game.reveal.color.mul(this.game.reveal.intensity), 1)
         })()
@@ -81,6 +81,9 @@ export class Intro
         mesh.rotation.z = Math.PI * 0.5
         
         this.game.scene.add(mesh)
+
+        // Hide the circle mesh since reveal is disabled
+        mesh.visible = false
 
         this.circle.mesh = mesh
 

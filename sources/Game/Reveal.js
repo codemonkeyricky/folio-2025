@@ -13,7 +13,7 @@ export class Reveal
         const respawn = this.game.respawns.getDefault()
         this.position = respawn.position.clone()
         this.position2Uniform = uniform(vec2(this.position.x, this.position.z))
-        this.distance = uniform(0)
+        this.distance = uniform(99999)
         this.thickness = uniform(0.05)
         this.color = uniform(color('#e88eff'))
         this.intensity = uniform(5.5)
@@ -45,11 +45,28 @@ export class Reveal
 
     updateStep(step)
     {
-        const speedMultiplier = location.hash.match(/skip/i) ? 4 : 1
+        const speedMultiplier = 1
 
         // Step 0
         if(step === 0)
         {
+            // If distance is already large (skip reveal), show everything immediately
+            if(this.distance.value >= 99999) {
+                // Skip circle hide animation, show grid immediately
+                this.game.world.grid.show()
+
+                // Label and sound button
+                this.game.world.intro.setText()
+                this.game.world.intro.setSoundButton()
+                this.game.world.intro.showLabel()
+
+                // Skip to step 2 after a brief delay (allow label animation)
+                this.game.ticker.wait(0.5, () => {
+                    this.updateStep(2)
+                })
+
+                return
+            }
             // Intro loader => Hide circle
             this.game.world.intro.circle.hide(() =>
             {
