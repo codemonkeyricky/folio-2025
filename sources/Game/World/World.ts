@@ -29,8 +29,7 @@ import { Fences } from './Fences.js'
 import { Benches } from './Benches.js'
 import { Scenery } from './Scenery.js'
 
-export class World
-{
+export class World {
     game: Game
     intro: Intro
     visualVehicle: VisualVehicle
@@ -53,8 +52,7 @@ export class World
     bricks: Bricks
     whispers: Whispers
 
-    constructor()
-    {
+    constructor() {
         this.game = Game.getInstance()
 
         this.step(0)
@@ -66,15 +64,12 @@ export class World
         // this.setTestShadow()
     }
 
-    step(step: number): void
-    {
-        if(step === 0)
-        {
+    step(step: number): void {
+        if (step === 0) {
             // this.grid = new Grid()
             this.intro = new Intro()
         }
-        else if(step === 1)
-        {
+        else if (step === 1) {
             this.visualVehicle = new VisualVehicle(this.game.resources.vehicle.scene)
             this.floor = new Floor()
             this.waterSurface = new WaterSurface()
@@ -101,14 +96,12 @@ export class World
             // this.scenery = new Scenery()
             // this.areas = new Areas()
         }
-        else if(step === 2)
-        {
+        else if (step === 2) {
             this.whispers = new Whispers()
         }
     }
 
-    setPhysicalFloor(): void
-    {
+    setPhysicalFloor(): void {
         this.game.objects.add(
             null,
             {
@@ -116,14 +109,13 @@ export class World
                 friction: 0.25,
                 restitution: 0,
                 colliders: [
-                    { shape: 'cuboid', parameters: [ 1000, 1, 1000 ], position: { x: 0, y: - 1.01, z: 0 }, category: 'floor' },
+                    { shape: 'cuboid', parameters: [1000, 1, 1000], position: { x: 0, y: - 1.01, z: 0 }, category: 'floor' },
                 ]
             }
         )
     }
 
-    setTestKtx(): void
-    {
+    setTestKtx(): void {
         const mesh = new THREE.Mesh(
             new THREE.BoxGeometry(10, 10, 10),
             new THREE.MeshBasicNodeMaterial(),
@@ -137,8 +129,7 @@ export class World
         this.game.scene.add(mesh)
     }
 
-    setTestShadow(): void
-    {
+    setTestShadow(): void {
         // Geometry
         const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
 
@@ -166,8 +157,7 @@ export class World
     }
 
 
-    setTestMesh(): void
-    {
+    setTestMesh(): void {
         console.log(this.game.rendering.renderer.library)
         const testMesh = new THREE.Mesh(
             new THREE.SphereGeometry(1, 32, 32),
@@ -204,15 +194,13 @@ export class World
         // this.game.scene.add(testMesh2)
     }
 
-    setAxesHelper(): void
-    {
+    setAxesHelper(): void {
         const axesHelper = new THREE.AxesHelper()
         axesHelper.position.y = 0.1
         this.game.scene.add(axesHelper)
     }
 
-    setCollisionGroupsTest(): void
-    {
+    setCollisionGroupsTest(): void {
         // // Left (object)
         // this.game.objects.add(
         //     {
@@ -228,7 +216,7 @@ export class World
             {
                 type: 'dynamic',
                 position: { x: 4, y: 2, z: -1.1 },
-                colliders: [ { shape: 'cuboid', parameters: [ 0.5, 0.5, 0.5 ], category: 'floor' } ]
+                colliders: [{ shape: 'cuboid', parameters: [0.5, 0.5, 0.5], category: 'floor' }]
             }
         )
 
