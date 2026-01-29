@@ -1,7 +1,33 @@
 import { Game } from './Game.js'
 
-let i = 0
+export interface Visual {
+    object3D: any
+    parent: any
+}
+
+export interface Physical {
+    body: any
+    type: string
+    initialState: {
+        position: any
+        rotation: any
+        sleeping: boolean
+    }
+}
+
+export interface ObjectData {
+    visual: Visual | null
+    physical: Physical | null
+    needsUpdate: boolean
+    reseting: boolean
+}
+
 export class Objects {
+    game: Game
+    list: Map<number, ObjectData>
+    key: number
+    roundedViewPosition: { x: number; z: number }
+
     constructor() {
         this.game = Game.getInstance()
         this.list = new Map()
@@ -13,8 +39,8 @@ export class Objects {
         }, 4)
     }
 
-    add(_visualDescription = null, _physicalDescription = null) {
-        const object = {
+    add(_visualDescription: any = null, _physicalDescription: any = null): ObjectData {
+        const object: ObjectData = {
             visual: null,
             physical: null,
             needsUpdate: false,
@@ -26,7 +52,7 @@ export class Objects {
          */
         if (_visualDescription && _visualDescription.model) {
             // Default parameters
-            const visualDescription = {
+            const visualDescription: any = {
                 updateMaterials: true,
                 castShadow: true,
                 receiveShadow: true,
@@ -35,9 +61,10 @@ export class Objects {
             }
 
             // Visual
-            const visual = {}
-            visual.object3D = _visualDescription.model
-            visual.parent = visualDescription.parent
+            const visual: Visual = {
+                object3D: _visualDescription.model,
+                parent: visualDescription.parent
+            }
 
             // Update materials
             if (visualDescription.updateMaterials)
@@ -45,13 +72,13 @@ export class Objects {
 
             // Update shadows
             if (visualDescription.castShadow || visualDescription.receiveShadow) {
-                visualDescription.model.traverse(_child => {
-                    if (_child.isMesh) {
+                visualDescription.model.traverse((child: any) => {
+                    if (child.isMesh) {
                         if (visualDescription.castShadow)
-                            _child.castShadow = true
+                            child.castShadow = true
 
                         if (visualDescription.receiveShadow)
-                            _child.receiveShadow = true
+                            child.receiveShadow = true
                     }
                 })
             }
@@ -89,7 +116,7 @@ export class Objects {
 
         // If sleeping, not enabled or fixed apply transform directly
         if (object.visual && object.physical) {
-            if (_physicalDescription.sleeping || !_physicalDescription.enabled || object.physical.type === 'fixed') {
+            if (_physicalDescription?.sleeping || !_physicalDescription?.enabled || object.physical.type === 'fixed') {
                 object.visual.object3D.position.copy(object.physical.body.translation())
                 object.visual.object3D.quaternion.copy(object.physical.body.rotation())
             }
@@ -98,13 +125,13 @@ export class Objects {
         return object
     }
 
-    getFromModel(_model, _visualDescription = {}, _physicalDescription = {}) {
+    getFromModel(_model: any, _visualDescription: any = {}, _physicalDescription: any = {}): [any, any | null] {
         let name = _model.name
 
         const physical = !!name.match(/physical/i)
         const cleanUpRegexp = /physical|fixed|dynamic|kinematicPositionBased/gi
 
-        const colliders = []
+        const colliders: any[] = []
 
         if (physical) {
             // Define type
@@ -143,7 +170,7 @@ export class Objects {
             // Colliders
             const children = [..._model.children]
             for (const _child of children) {
-                const collider = {
+                const collider: any = {
                     position: _child.position,
                     quaternion: _child.quaternion,
                 }
@@ -195,12 +222,12 @@ export class Objects {
         ]
     }
 
-    addFromModel(_model, _visualDescription = {}, _physicalDescription = {}) {
+    addFromModel(_model: any, _visualDescription: any = {}, _physicalDescription: any = {}) {
         // Add
         return this.add(...this.getFromModel(_model, _visualDescription, _physicalDescription))
     }
 
-    resetObject(object) {
+    resetObject(object: ObjectData) {
         if (
             !object.physical ||
             (object.physical.type !== 'dynamic' && object.physical.type !== 'kinematicPositionBased') ||
@@ -221,11 +248,11 @@ export class Objects {
 
         // Wait a second and reactivate
         this.game.ticker.wait(1, () => {
-            object.physical.body.setEnabled(isEnabled)
+            object.physical!.body.setEnabled(isEnabled)
 
             // Sleep
-            if (object.physical.initialState.sleeping)
-                object.physical.body.sleep()
+            if (object.physical!.initialState.sleeping)
+                object.physical!.body.sleep()
 
             object.reseting = false
             this.game.ticker.wait(1, () => {
@@ -242,27 +269,27 @@ export class Objects {
     }
 
     resetAll() {
-        this.list.forEach((object) => {
+        this.list.forEach((object: ObjectData) => {
             this.resetObject(object)
         })
     }
 
-    disable(object) {
+    disable(object: ObjectData) {
         if (object.physical) {
-            object.physical.body.setLinvel({ x: 0, y: 0, z: 0 }, false)
-            object.physical.body.setAngvel({ x: 0, y: 0, z: 0 }, false)
-            object.physical.body.resetForces()
-            object.physical.body.resetTorques()
-            object.physical.body.setEnabled(false)
+            object.physical!.body.setLinvel({ x: 0, y: 0, z: 0 }, false)
+            object.physical!.body.setAngvel({ x: 0, y: 0, z: 0 }, false)
+            object.physical!.body.resetForces()
+            object.physical!.body.resetTorques()
+            object.physical!.body.setEnabled(false)
         }
 
         if (object.visual)
             object.visual.object3D.removeFromParent()
     }
 
-    enable(object) {
+    enable(object: ObjectData) {
         if (object.physical)
-            object.physical.body.setEnabled(true)
+            object.physical!.body.setEnabled(true)
 
         if (object.visual)
             object.visual.parent.add(object.visual.object3D)
@@ -280,24 +307,25 @@ export class Objects {
             this.roundedViewPosition.x = roundedViewPosition.x
             this.roundedViewPosition.z = roundedViewPosition.z
         }
-        this.list.forEach((_object) => {
-            const position = _object.physical ? _object.physical.body.translation() : null
+        this.list.forEach((_object: ObjectData) => {
+            const position = _object.physical ? _object.physical!.body.translation() : null
 
             // Apply physical to visual
             if (
                 _object.visual &&
                 _object.physical &&
                 (
+
                     _object.needsUpdate ||
                     (
-                        !_object.physical.body.isSleeping() &&
-                        _object.physical.body.isEnabled()
+                        !_object.physical!.body.isSleeping() &&
+                        _object.physical!.body.isEnabled()
                     )
                 )
             ) {
                 _object.needsUpdate = false
                 _object.visual.object3D.position.copy(position)
-                _object.visual.object3D.quaternion.copy(_object.physical.body.rotation())
+                _object.visual.object3D.quaternion.copy(_object.physical!.body.rotation())
             }
 
 
@@ -311,8 +339,8 @@ export class Objects {
                 if (objectsNeedDistanceTest) {
                     const distanceToView = Math.hypot(this.roundedViewPosition.x - position.x, this.roundedViewPosition.z - position.z)
 
-                    if (_object.physical.body.isEnabled() && !_object.physical.body.isSleeping() && distanceToView > this.game.view.optimalArea.radius) {
-                        _object.physical.body.sleep()
+                    if (_object.physical!.body.isEnabled() && !_object.physical!.body.isSleeping() && distanceToView > this.game.view.optimalArea.radius) {
+                        _object.physical!.body.sleep()
                     }
                 }
             }
