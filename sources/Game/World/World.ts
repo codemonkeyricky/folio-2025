@@ -31,6 +31,28 @@ import { Scenery } from './Scenery.js'
 
 export class World
 {
+    game: Game
+    intro: Intro
+    visualVehicle: VisualVehicle
+    floor: Floor
+    waterSurface: WaterSurface
+    grass: Grass
+    windLines: WindLines
+    confetti: Confetti
+    leaves: Leaves
+    rain: RainLines
+    lightnings: Lightnings
+    fireballs: Fireballs
+    snow: Snow
+    visualTornado: VisualTornado
+    bushes: Bushes
+    birchTrees: Trees
+    oakTrees: Trees
+    cherryTrees: Trees
+    flowers: Flowers
+    bricks: Bricks
+    whispers: Whispers
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -44,7 +66,7 @@ export class World
         // this.setTestShadow()
     }
 
-    step(step)
+    step(step: number): void
     {
         if(step === 0)
         {
@@ -85,7 +107,7 @@ export class World
         }
     }
 
-    setPhysicalFloor()
+    setPhysicalFloor(): void
     {
         this.game.objects.add(
             null,
@@ -100,7 +122,7 @@ export class World
         )
     }
 
-    setTestKtx()
+    setTestKtx(): void
     {
         const mesh = new THREE.Mesh(
             new THREE.BoxGeometry(10, 10, 10),
@@ -115,7 +137,7 @@ export class World
         this.game.scene.add(mesh)
     }
 
-    setTestShadow()
+    setTestShadow(): void
     {
         // Geometry
         const geometry = new THREE.BoxGeometry(0.5, 0.5, 0.5)
@@ -144,7 +166,7 @@ export class World
     }
 
 
-    setTestMesh()
+    setTestMesh(): void
     {
         console.log(this.game.rendering.renderer.library)
         const testMesh = new THREE.Mesh(
@@ -182,14 +204,14 @@ export class World
         // this.game.scene.add(testMesh2)
     }
 
-    setAxesHelper()
+    setAxesHelper(): void
     {
         const axesHelper = new THREE.AxesHelper()
         axesHelper.position.y = 0.1
         this.game.scene.add(axesHelper)
     }
 
-    setCollisionGroupsTest()
+    setCollisionGroupsTest(): void
     {
         // // Left (object)
         // this.game.objects.add(
