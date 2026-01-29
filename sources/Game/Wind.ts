@@ -37,7 +37,7 @@ export class Wind
         this.localTime = uniform(0)
         this.timeFrequency = 0.1
         
-        this.offsetNode = Fn(([position]) =>
+        this.offsetNode = Fn(([position]) => 
         {
             const remapedPosition = position.mul(this.positionFrequency)
 
@@ -48,8 +48,8 @@ export class Wind
             const noise2 = texture(this.game.noises.perlin, noiseUv2).r.sub(0.5)
 
             const intensity = noise2.add(noise1)
-            
-            return vec2(this.direction.mul(intensity).mul(this.strength))
+
+            return vec2(this.direction.mul(intensity).mul(this.strength), 0)
         })
 
         this.game.ticker.events.on('tick', () =>
@@ -75,7 +75,7 @@ export class Wind
             this.debugPanel.addBinding(this, 'timeFrequency', { min: 0, max: 1, step: 0.001 })
             this.debugPanel
                 .addBinding(this, 'angle', { min: - Math.PI, max: Math.PI, step: 0.001 })
-                .on('change', tweak => { this.direction.value.set(Math.sin(tweak.value), Math.cos(tweak.value),) })
+                .on('change', (tweak: any) => { this.direction.value.set(Math.sin(tweak.value), Math.cos(tweak.value),) })
         }
     }
 
