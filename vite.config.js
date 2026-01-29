@@ -4,8 +4,9 @@ import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
 import basicSsl from '@vitejs/plugin-basic-ssl'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
+import { defineConfig } from 'vite'
 
-export default {
+export default defineConfig({
     root: 'sources/', // Sources files (typically where index.html is)
     envDir: '../',  // Directory where the env file is located
     publicDir: '../static/', // Path from "root" to static assets (files that are served as they are)
@@ -29,5 +30,12 @@ export default {
         restart({ restart: [ '../static/**', ] }), // Restart server on static file change
         nodePolyfills(),
         // basicSsl()
-    ]
-}
+    ],
+    esbuild: {
+        tsconfigRaw: {
+            compilerOptions: {
+                strict: true
+            }
+        }
+    }
+})
