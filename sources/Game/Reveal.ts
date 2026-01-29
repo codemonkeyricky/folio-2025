@@ -3,10 +3,20 @@ import { color, uniform, vec2 } from 'three/tsl'
 import { Game } from './Game.js'
 import gsap from 'gsap'
 
-export class Reveal
-{
-    constructor()
-    {
+export class Reveal {
+    game: any
+    step: number
+    position: THREE.Vector3
+    position2Uniform: any
+    distance: any
+    thickness: any
+    color: any
+    intensity: any
+    intensityMultiplier: number
+    sound: any
+    debugPanel: any
+
+    constructor() {
         this.game = Game.getInstance()
         
         this.step = -1
@@ -43,7 +53,7 @@ export class Reveal
         this.game.ticker.events.on('tick', this.update, 10)
     }
 
-    updateStep(step)
+    updateStep(step: any)
     {
         const speedMultiplier = 1
 
