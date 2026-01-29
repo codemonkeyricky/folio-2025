@@ -2,8 +2,7 @@ import { vec2, Fn, texture, uniform } from 'three/tsl'
 import { Game } from './Game.js'
 import { remapClamp } from './utilities/maths.js'
 
-export class Wind
-{
+export class Wind {
     game: Game
     debugPanel?: any
     angle: number
@@ -15,12 +14,10 @@ export class Wind
     offsetNode: ReturnType<typeof Fn>
     strengthBinding: any
 
-    constructor()
-    {
+    constructor() {
         this.game = Game.getInstance()
 
-        if(this.game.debug.active)
-        {
+        if (this.game.debug.active) {
             this.debugPanel = this.game.debug.panel.addFolder({
                 title: '💨 Wind',
                 expanded: false,
@@ -36,7 +33,7 @@ export class Wind
         this.strength = uniform(0.5)
         this.localTime = uniform(0)
         this.timeFrequency = 0.1
-        
+
         this.offsetNode = Fn(([position]: any) => {
             const remapedPosition = position.mul(this.positionFrequency)
 
@@ -51,8 +48,7 @@ export class Wind
             return vec2(this.direction.mul(intensity).mul(this.strength), 0)
         })
 
-        this.game.ticker.events.on('tick', () =>
-        {
+        this.game.ticker.events.on('tick', () => {
             this.update()
         }, 9)
 
@@ -62,14 +58,12 @@ export class Wind
             this.strength,
             'value',
             { label: 'strength', min: 0, max: 1, step: 0.001 },
-            () =>
-            {
+            () => {
                 return remapClamp(this.game.weather.wind.value, 0, 1, 0.1, 1)
             }
         )
 
-        if(this.game.debug.active)
-        {
+        if (this.game.debug.active) {
             this.debugPanel.addBinding(this.positionFrequency, 'value', { label: 'positionFrequency', min: 0, max: 1, step: 0.001 })
             this.debugPanel.addBinding(this, 'timeFrequency', { min: 0, max: 1, step: 0.001 })
             this.debugPanel
@@ -78,8 +72,7 @@ export class Wind
         }
     }
 
-    update()
-    {
+    update() {
         // Apply weather
         this.strengthBinding.update()
         this.localTime.value += this.game.ticker.deltaScaled * this.timeFrequency * this.strength.value

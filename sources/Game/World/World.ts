@@ -1,3 +1,4 @@
+import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
 import { Floor } from './Floor.js'
 import { Grass } from './Grass.js'
@@ -66,9 +67,9 @@ export class World {
             this.snow = new Snow(this.game)
             this.visualTornado = new VisualTornado(this.game)
             this.bushes = new Bushes(this.game)
-            this.birchTrees = new Trees('Birch Tree', this.game.resources.birchTreesVisualModel.scene, this.game.resources.birchTreesReferencesModel.scene.children, '#ff4f2b', '#ff903f', this.game)
-            this.oakTrees = new Trees('Oak Tree', this.game.resources.oakTreesVisualModel.scene, this.game.resources.oakTreesReferencesModel.scene.children, '#b4b536', '#d8cf3b', this.game)
-            this.cherryTrees = new Trees('Cherry Tree', this.game.resources.cherryTreesVisualModel.scene, this.game.resources.cherryTreesReferencesModel.scene.children, '#ff6d6d', '#ff9990', this.game)
+            this.birchTrees = new Trees('Birch Tree', this.game.resources.birchTreesVisualModel.scene, this.game.resources.birchTreesReferencesModel.scene.children, new THREE.Color('#ff4f2b'), new THREE.Color('#ff903f'))
+            this.oakTrees = new Trees('Oak Tree', this.game.resources.oakTreesVisualModel.scene, this.game.resources.oakTreesReferencesModel.scene.children, new THREE.Color('#b4b536'), new THREE.Color('#d8cf3b'))
+            this.cherryTrees = new Trees('Cherry Tree', this.game.resources.cherryTreesVisualModel.scene, this.game.resources.cherryTreesReferencesModel.scene.children, new THREE.Color('#ff6d6d'), new THREE.Color('#ff9990'))
             this.flowers = new Flowers(this.game)
             // this.bricks = new Bricks()
             // this.fences = new Fences()
