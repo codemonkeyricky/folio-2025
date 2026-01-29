@@ -4,21 +4,37 @@ import { Foliage } from './Foliage.js'
 import { color, uniform } from 'three/tsl'
 
 interface TreeReference {
-    matrix: THREE.Matrix4;
-    position: THREE.Vector3;
-    quaternion: THREE.Quaternion;
-    matrixWorld: THREE.Matrix4;
+    matrix: THREE.Matrix4
+    position: THREE.Vector3
+    quaternion: THREE.Quaternion
+    matrixWorld: THREE.Matrix4
 }
 
-export class Trees
-{
-    constructor(name, visual, references, colorA, colorB)
-    {
+export class Trees {
+    game!: Game
+    debugPanel!: any
+    visual!: THREE.Object3D
+    references!: TreeReference[]
+    colorA!: THREE.Color
+    colorB!: THREE.Color
+    modelParts!: {
+        leaves: THREE.Mesh[]
+        body: THREE.Mesh | null
+    }
+    bodies!: THREE.InstancedMesh
+    leaves!: Foliage
+
+    constructor(
+        name: string,
+        visual: THREE.Object3D,
+        references: TreeReference[],
+        colorA: THREE.Color,
+        colorB: THREE.Color
+    ) {
         this.game = Game.getInstance()
 
         // Debug
-        if(this.game.debug.active)
-        {
+        if (this.game.debug.active) {
             this.debugPanel = this.game.debug.panel.addFolder({
                 title: `🌳 ${name}`,
                 expanded: false,
@@ -36,50 +52,45 @@ export class Trees
         this.setPhysical()
     }
 
-    setModelParts()
-    {
-        this.modelParts = {}
-        this.modelParts.leaves = []
-        this.modelParts.body = null
-        
-        this.visual.traverse((_child) =>
-        {
-            if(_child.isMesh)
-            {
-                if(_child.name.startsWith('treeLeaves'))
+    setModelParts() {
+        this.modelParts = {
+            leaves: [],
+            body: null
+        }
+
+        this.visual.traverse((_child: any) => {
+            if (_child.isMesh) {
+                if (_child.name.startsWith('treeLeaves'))
                     this.modelParts.leaves.push(_child)
-                else if(_child.name.startsWith('treeBody'))
+                else if (_child.name.startsWith('treeBody'))
                     this.modelParts.body = _child
             }
         })
     }
 
-    setBodies()
-    {
-        this.game.materials.updateObject(this.modelParts.body)
-        this.bodies = new THREE.InstancedMesh(this.modelParts.body.geometry, this.modelParts.body.material, this.references.length)
-        this.bodies.instanceMatrix.setUsage(THREE.StaticDrawUsage)
-        this.bodies.castShadow = true
-        this.bodies.receiveShadow = true
-        
-        let i = 0
-        for(const treeReference of this.references)
-        {
-            this.bodies.setMatrixAt(i, treeReference.matrix)
-            i++
-        }
+    setBodies() {
+        if (this.modelParts.body) {
+            this.game.materials.updateObject(this.modelParts.body)
+            this.bodies = new THREE.InstancedMesh(this.modelParts.body.geometry, this.modelParts.body.material, this.references.length)
+            this.bodies.instanceMatrix.setUsage(THREE.StaticDrawUsage)
+            this.bodies.castShadow = true
+            this.bodies.receiveShadow = true
 
-        this.game.scene.add(this.bodies)
+            let i = 0
+            for (const treeReference of this.references) {
+                this.bodies.setMatrixAt(i, treeReference.matrix)
+                i++
+            }
+
+            this.game.scene.add(this.bodies)
+        }
     }
 
-    setLeaves()
-    {
+    setLeaves() {
         const references = []
-        
-        for(const treeReference of this.references)
-        {
-            for(const leaves of this.modelParts.leaves)
-            {
+
+        for (const treeReference of this.references) {
+            for (const leaves of this.modelParts.leaves) {
                 const finalMatrix = leaves.matrix.clone().premultiply(treeReference.matrixWorld)
                 const reference = new THREE.Object3D()
                 reference.applyMatrix4(finalMatrix)
@@ -93,8 +104,7 @@ export class Trees
         this.leaves = new Foliage(references, leavesColorANode, leavesColorBNode, true)
 
         // Debug
-        if(this.game.debug.active)
-        {
+        if (this.game.debug.active) {
             this.game.debug.addThreeColorBinding(this.debugPanel, leavesColorANode.value, 'leavesColorA')
             this.game.debug.addThreeColorBinding(this.debugPanel, leavesColorBNode.value, 'leavesColorB')
             this.debugPanel.addBinding(this.leaves.material.shadowOffset, 'value', { label: 'shadowOffset', min: 0, max: 2, step: 0.001 })
@@ -104,10 +114,8 @@ export class Trees
         }
     }
 
-    setPhysical()
-    {
-        for(const treeReference of this.references)
-        {
+    setPhysical() {
+        for (const treeReference of this.references) {
             this.game.objects.add(
                 null,
                 {
@@ -116,10 +124,9 @@ export class Trees
                     rotation: treeReference.quaternion,
                     friction: 0.7,
                     sleeping: true,
-                    colliders: [ { shape: 'cylinder', parameters: [ 2.5, 0.15 ], category: 'object' } ],
-                    onCollision: (force, position) =>
-                    {
-                        this.game.audio.groups.get('hitDefault').playRandomNext(force, position)
+                    colliders: [{ shape: 'cylinder', parameters: [2.5, 0.15], category: 'object' }],
+                    onCollision: (_force: any, _position: any) => {
+                        this.game.audio.groups.get('hitDefault').playRandomNext(_force, _position)
                     }
                 }
             )
