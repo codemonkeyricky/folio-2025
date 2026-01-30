@@ -3,7 +3,17 @@ import { Game } from './Game.js'
 
 export class InstancedGroup
 {
-    constructor(references = [], group = null, autoUpdate = true)
+    game: Game
+    references: any[]
+    group: any
+    count: number
+    needsUpdate: boolean
+    meshes: {
+        instance: THREE.InstancedMesh
+        localMatrix: THREE.Matrix4
+    }[]
+
+    constructor(references: any[] = [], group: any = null, autoUpdate: boolean = true)
     {
         this.game = Game.getInstance()
 
@@ -11,6 +21,7 @@ export class InstancedGroup
         this.group = group
         this.count = this.references.length
         this.needsUpdate = false
+        this.meshes = []
 
         this.setMeshes()
 
@@ -21,7 +32,7 @@ export class InstancedGroup
                 this.update()
             }, 13)
         }
-        
+
         this.update()
     }
 
@@ -29,17 +40,20 @@ export class InstancedGroup
     {
         this.meshes = []
 
-        this.group.traverse((_child) =>
+        this.group.traverse((_child: any) =>
         {
             if(_child.isMesh)
             {
-                const mesh = {}
+                const mesh: any = {
+                    instance: null,
+                    localMatrix: null
+                }
 
                 _child.updateMatrix()
                 _child.updateWorldMatrix()
                 mesh.localMatrix = _child.matrix
                 // mesh.localMatrix = _child.matrixWorld
-                
+
                 mesh.instance = new THREE.InstancedMesh(_child.geometry, _child.material, this.count)
                 mesh.instance.name = _child.name
                 mesh.instance.castShadow = _child.castShadow
@@ -52,24 +66,24 @@ export class InstancedGroup
         })
     }
 
-    static getReferencesFromChildren(children)
+    static getReferencesFromChildren(children: any[]): THREE.Object3D[]
     {
-        const references = []
-        
+        const references: THREE.Object3D[] = []
+
         for(const child of children)
         {
             const reference = new THREE.Object3D()
             reference.position.copy(child.position)
             reference.rotation.copy(child.rotation)
             reference.scale.copy(child.scale)
-            reference.needsUpdate = true
+            ;(reference as any).needsUpdate = true
             references.push(reference)
         }
-        
+
         return references
     }
 
-    static getBaseAndReferencesFromInstances(instances)
+    static getBaseAndReferencesFromInstances(instances: any[]): [any, THREE.Object3D[]]
     {
         // Base
         const base = instances[0].clone()
@@ -79,7 +93,7 @@ export class InstancedGroup
 
         // References
         const references = InstancedGroup.getReferencesFromChildren(instances)
-        
+
         return [ base, references ]
     }
 

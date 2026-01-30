@@ -1,6 +1,6 @@
 import * as THREE from 'three/webgpu'
 import { Game } from './Game.js'
-import { InstancedGroup } from './InstancedGroup.js'
+import { InstancedGroup } from './InstancedGroup.ts'
 import { cameraPosition, color, Fn, luminance, mix, normalWorld, positionWorld, uniform, uv, vec3, vec4 } from 'three/tsl'
 import gsap from 'gsap'
 

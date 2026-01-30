@@ -2,7 +2,7 @@ import * as THREE from 'three/webgpu'
 import { Game } from '../../Game.js'
 import { InteractivePoints } from '../../InteractivePoints.js'
 import socialData from '../../../data/social.js'
-import { InstancedGroup } from '../../InstancedGroup.js'
+import { InstancedGroup } from '../../InstancedGroup.ts'
 import { Area } from './Area.js'
 import { View } from '../../View.js'
 

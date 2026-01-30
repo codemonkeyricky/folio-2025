@@ -1,5 +1,5 @@
 import { Game } from '../Game.js'
-import { InstancedGroup } from '../InstancedGroup.js'
+import { InstancedGroup } from '../InstancedGroup.ts'
 
 export class Fences
 {

@@ -1,6 +1,6 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
-import { InstancedGroup } from '../InstancedGroup.js'
+import { InstancedGroup } from '../InstancedGroup.ts'
 import { hash, instancedArray, instanceIndex, sin, uniform, vec3 } from 'three/tsl'
 import gsap from 'gsap'
 

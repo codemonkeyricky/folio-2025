@@ -1,7 +1,7 @@
 import * as THREE from 'three/webgpu'
 import gsap from 'gsap'
 import { Game } from '../Game.js'
-import { InstancedGroup } from '../InstancedGroup.js'
+import { InstancedGroup } from '../InstancedGroup.ts'
 
 export class ExplosiveCrates
 {
