@@ -1,13 +1,17 @@
 import * as THREE from 'three/webgpu'
 
 
-export class PortalSlabGeometry extends THREE.BufferGeometry
-{
-    constructor(size = 1)
-    {
+export class PortalSlabGeometry extends THREE.BufferGeometry {
+    type: 'PortalSlabGeometry' = 'PortalSlabGeometry'
+
+    parameters: {
+        size: number
+    }
+
+    constructor(size: number = 1) {
         super()
 
-        this.type = 'PortalSlabsGeometry'
+        this.type = 'PortalSlabGeometry'
 
         this.parameters = {
             size
@@ -100,28 +104,25 @@ export class PortalSlabGeometry extends THREE.BufferGeometry
         this.setIndex(new THREE.Uint16BufferAttribute(indices, 1))
     }
 }
-export class PortalSlabsGeometry extends THREE.BufferGeometry
-{
-    constructor(size = 1, columnsCount = 5)
-    {
+export class PortalSlabsGeometry extends THREE.BufferGeometry {
+    constructor(size: number = 1, columnsCount: number = 5) {
         super()
 
-        this.type = 'PortalSlabsGeometry'
+        ;(this as any).type = 'PortalSlabsGeometry'
 
-        this.parameters = {
+        ;(this as any).parameters = {
             size,
             columnsCount
         }
 
-        // Instantiate one unique slab as a reference
         const slabGeometry = new PortalSlabGeometry()
 
         const verticesCount = slabGeometry.attributes.position.count
-        const indicesCount = slabGeometry.index.count
+        const indicesCount = slabGeometry.index?.count ?? 0
 
         const slabPositions = slabGeometry.attributes.position.array
         const slabEdges = slabGeometry.attributes.edge.array
-        const slabIndices = slabGeometry.index.array
+        const slabIndices = slabGeometry.index?.array ?? new Uint16Array(0)
 
         // Grid of slabs
         const slabsCount = columnsCount * columnsCount

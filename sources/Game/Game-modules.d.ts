@@ -67,6 +67,10 @@ declare module './Geometries/PortalSlabsGeometry.js' {
     const module: any
     export default module
 }
+declare module './Geometries/PortalSlabsGeometry.ts' {
+    const module: any
+    export default module
+}
 declare module './Geometries/WindLineGeometry.js' {
     const module: any
     export default module
