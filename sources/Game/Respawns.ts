@@ -3,10 +3,19 @@ import { Game } from './Game.js'
 
 export class Respawns
 {
-    constructor(defaultName = 'landing')
+    game: Game
+    defaultName: string
+    items: Map<string, {
+        name: string
+        position: THREE.Vector3
+        rotation: number
+    }>
+
+    constructor(defaultName: string = 'landing')
     {
         this.game = Game.getInstance()
         this.defaultName = defaultName
+        this.items = new Map()
 
         this.setItems()
     }
@@ -37,7 +46,7 @@ export class Respawns
         }
     }
 
-    getByName(name)
+    getByName(name: string)
     {
         return this.items.get(name)
     }
@@ -47,12 +56,12 @@ export class Respawns
         return this.items.get(this.defaultName)
     }
 
-    getClosest(position)
+    getClosest(position: THREE.Vector3)
     {
         let closestItem = null
         let closestDistance = Infinity
 
-        this.items.forEach((item) =>
+        this.items.forEach((item: any) =>
         {
             const distance = Math.hypot(item.position.x - position.x, item.position.z - position.z)
 
