@@ -1,15 +1,18 @@
 import { TempNode } from 'three/webgpu'
-import { nodeObject, Fn, uv, uniform, convertToTexture, vec2, vec3, vec4, mat3, luminance, add, blur, mix } from 'three/tsl'
+import { nodeObject, Fn, uv, uniform, convertToTexture, mix } from 'three/tsl'
 import { boxBlur } from 'three/examples/jsm/tsl/display/boxBlur.js'
 
 class CheapDOFNode extends TempNode
 {
+    textureNode: any
+    strength: any
+
 	static get type()
 	{
 		return 'CheapDOFNode'
 	}
 
-	constructor(textureNode)
+	constructor(textureNode: any)
 	{
 		super('vec4')
 
@@ -35,8 +38,8 @@ class CheapDOFNode extends TempNode
 			// })
 
 			const blurOutput = boxBlur(this.textureNode, {
-				size: 1,
-				separation: 2
+				size: uniform(1),
+				separation: uniform(2)
 			})
 
 			return mix(this.textureNode, blurOutput, strength)
@@ -48,4 +51,4 @@ class CheapDOFNode extends TempNode
 
 export default CheapDOFNode
 
-export const cheapDOF = (node) => nodeObject(new CheapDOFNode(convertToTexture(node)))
+export const cheapDOF = (node: any) => nodeObject(new CheapDOFNode(convertToTexture(node)))
