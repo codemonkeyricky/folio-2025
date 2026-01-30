@@ -3,11 +3,13 @@ import { Events } from '../Events.js'
 
 export class Wheel
 {
+    events: Events
+
     constructor()
     {
         this.events = new Events()
 
-        addEventListener('wheel', (_event) =>
+        addEventListener('wheel', (_event: any) =>
         {
             const normalized = normalizeWheel(_event)
 
