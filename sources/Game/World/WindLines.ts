@@ -6,16 +6,14 @@ import { WindLineGeometry } from '../Geometries/WindLineGeometry.js'
 import { remapClamp } from '../utilities/maths.js'
 import { MeshDefaultMaterial } from '../Materials/MeshDefaultMaterial.js'
 
-class WindLine
-{
+class WindLine {
     game: Game
     available: boolean
     thickness: ReturnType<typeof uniform>
     progress: ReturnType<typeof uniform>
     mesh: THREE.Mesh
 
-    constructor(thickness: number = 0.1, _tangent: ReturnType<typeof vec3> = vec3(0, 1, -1))
-    {
+    constructor(thickness: number = 0.1, _tangent: ReturnType<typeof vec3> = vec3(0, 1, -1)) {
         this.game = Game.getInstance()
 
         this.available = true
@@ -36,11 +34,10 @@ class WindLine
         this.thickness = uniform(thickness)
         this.progress = uniform(0)
 
-        material.vertexNode = Fn(() =>
-        {
+        material.vertexNode = Fn(() => {
             const worldPosition = modelWorldMatrix.mul(vec4(positionGeometry, 1))
             const tangent = _tangent.normalize()
-            
+
             const ratio = attribute('ratio')
             const baseThickness = ratio.sub(0.5).abs().mul(2).oneMinus().smoothstep(0, 1)
             const remapedProgress = this.progress.mul(3).sub(1)
@@ -49,7 +46,7 @@ class WindLine
 
             const sideStep = floor(vertexIndex.toFloat().mul(3).sub(2).div(3).mod(2)).sub(0.5)
             const sideOffset = mul(tangent, sideStep.mul(finalThickness))
-            
+
             worldPosition.addAssign(vec4(sideOffset, 0))
 
             const viewPosition = cameraViewMatrix.mul(worldPosition)
@@ -63,8 +60,7 @@ class WindLine
     }
 }
 
-export class WindLines
-{
+export class WindLines {
     game: Game
     debugPanel?: any
     intervalRange: { min: number; max: number }
@@ -74,18 +70,16 @@ export class WindLines
     pool: WindLine[]
     durationBinding: any
 
-    constructor()
-    {
+    constructor() {
         this.game = Game.getInstance()
 
-        if(this.game.debug.active)
-        {
+        if (this.game.debug.active) {
             this.debugPanel = this.game.debug.panel.addFolder({
                 title: '⌇ Wind lines',
                 expanded: false,
             })
         }
-        
+
         this.intervalRange = { min: 300, max: 2000 }
         this.duration = 4
         this.translation = 1
@@ -98,12 +92,10 @@ export class WindLines
             new WindLine()
         ]
 
-        const displayInterval = (): void =>
-        {
+        const displayInterval = (): void => {
             this.display()
 
-            setTimeout(() =>
-            {
+            setTimeout(() => {
                 displayInterval()
             }, this.intervalRange.min + Math.random() * (this.intervalRange.max - this.intervalRange.min))
         }
@@ -114,14 +106,12 @@ export class WindLines
             this,
             'duration',
             { min: 0, max: 8, step: 0.001 },
-            () =>
-            {
+            () => {
                 return remapClamp(this.game.weather.wind.value, 0, 1, 8, 2)
             }
         )
 
-        if(this.game.debug.active)
-        {
+        if (this.game.debug.active) {
             this.debugPanel.addBinding(this, 'intervalRange', {
                 min: 0,
                 max: 4000,
@@ -144,9 +134,8 @@ export class WindLines
                 min: 0,
                 max: 1,
                 step: 0.001,
-            }).on('change', () =>
-            {
-                for(const windLine of this.pool)
+            }).on('change', () => {
+                for (const windLine of this.pool)
                     windLine.thickness.value = this.thickness
             })
         }
@@ -154,11 +143,10 @@ export class WindLines
         displayInterval()
     }
 
-    display(): void
-    {
+    display(): void {
         const windLine = this.pool.find(windLine => windLine.available)
 
-        if(!windLine)
+        if (!windLine)
             return
 
         // Apply weather
@@ -195,13 +183,12 @@ export class WindLines
             {
                 value: 1,
                 duration: this.duration,
-                onComplete: () =>
-                {
+                onComplete: () => {
                     windLine.mesh.visible = false
                     windLine.available = true
                 }
             }
         )
-        
+
     }
 }

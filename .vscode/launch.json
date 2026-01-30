@@ -12,11 +12,34 @@
       "isBackground": true
     },
     {
-      "type": "chrome",
+      "type": "pwa-chrome",
       "request": "launch",
       "name": "Debug TypeScript in Chrome",
       "url": "http://localhost:5173",
       "webRoot": "${workspaceFolder}/sources",
+      "port": 9222,
+      "runtimeArgs": ["--remote-debugging-port=9222"],
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/*",
+        "webpack:///*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "meteor://💻app/*": "${webRoot}/*"
+      },
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ]
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug TypeScript in Chrome (Legacy)",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/sources",
+      "port": 9222,
+      "runtimeArgs": ["--remote-debugging-port=9222"],
       "sourceMaps": true,
       "sourceMapPathOverrides": {
         "webpack:///./*": "${webRoot}/*",
