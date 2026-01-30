@@ -2,10 +2,12 @@ import { Events } from '../Events.js'
 
 export default class Keyboard
 {
+    events: Events
+    pressed: string[]
+
     constructor()
     {
         this.events = new Events()
-
         this.pressed = []
 
         // Trigger up when tab visibility changes to visible
@@ -21,9 +23,9 @@ export default class Keyboard
         addEventListener('keydown', (_event) =>
         {
             // On input, but not Escape key
-            if(document.activeElement.matches('input, textarea, [contenteditable]') && _event.code !== 'Escape')
+            if(document.activeElement?.matches('input, textarea, [contenteditable]') && _event.code !== 'Escape')
                 return
-                
+
             this.pressed.push(_event.code, _event.key)
             this.events.trigger('down', [ _event.code, _event.key ])
         })

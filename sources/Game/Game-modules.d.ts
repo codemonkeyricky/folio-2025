@@ -60,10 +60,6 @@ declare module './Explosions.js' {
     const module: any
     export default module
 }
-declare module './Fog.js' {
-    const module: any
-    export default module
-}
 declare module './Game.js' {
     const module: any
     export default module
@@ -97,14 +93,6 @@ declare module './Inputs/Inputs.js' {
     export default module
 }
 declare module './Inputs/InteractiveButtons.js' {
-    const module: any
-    export default module
-}
-declare module './Inputs/Keyboard.js' {
-    const module: any
-    export default module
-}
-declare module './Inputs/Nipple.js' {
     const module: any
     export default module
 }
@@ -204,7 +192,7 @@ declare module './PreRenderer.ts' {
     const module: any
     export default module
 }
-declare module './Quality.js' {
+declare module './Quality.ts' {
     const module: any
     export default module
 }
@@ -281,6 +269,14 @@ declare module './Water.js' {
     export default module
 }
 declare module './Weather.js' {
+    const module: any
+    export default module
+}
+declare module './Fog.ts' {
+    const module: any
+    export default module
+}
+declare module './Inputs/Keyboard.js' {
     const module: any
     export default module
 }
