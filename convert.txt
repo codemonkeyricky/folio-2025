@@ -1,5 +1,5 @@
 Repeat the following until step 1 returns nothing:
-    1. Pick **one** source .js file with less than 50 lines of code (ie. fd js$  | grep source | xargs wc | ... ) 
+    1. Pick **one** source .js file with less than 70 lines of code (ie. fd js$  | grep source | xargs wc | ... ) 
     2. Rename the .js to .ts 
     3. Run "npm run build" and fix all errors - this includes fixing all other files that import this file.
     4. Make sure no runtime error - run "npm run dev" and ensure no error logs in console

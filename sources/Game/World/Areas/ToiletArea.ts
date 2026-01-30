@@ -1,10 +1,17 @@
 import * as THREE from 'three/webgpu'
-import { Game } from '../../Game.js'
-import { Area } from './Area.js'
+import { Area } from './Area.ts'
 
 export class ToiletArea extends Area
 {
-    constructor(model)
+    cabin: {
+        body: any
+        down: boolean
+    } = {
+        body: null as any,
+        down: false
+    }
+
+    constructor(model: any)
     {
         super(model)
 
@@ -15,9 +22,10 @@ export class ToiletArea extends Area
 
     setCabin()
     {
-        this.cabin = {}
-        this.cabin.body = this.references.items.get('cabin')[0].userData.object.physical.body
-        this.cabin.down = false
+        this.cabin = {
+            body: this.references.items.get('cabin')[0].userData.object.physical.body,
+            down: false
+        }
     }
 
     setCandleFlames()
@@ -25,7 +33,7 @@ export class ToiletArea extends Area
         const mesh = this.references.items.get('moon')[0]
         mesh.visible = this.game.dayCycles.intervalEvents.get('night').inInterval
 
-        this.game.dayCycles.events.on('night', (inInterval) =>
+        this.game.dayCycles.events.on('night', (inInterval: boolean) =>
         {
             mesh.visible = inInterval
         })

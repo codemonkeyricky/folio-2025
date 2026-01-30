@@ -6,7 +6,24 @@ import { circleIntersectsPolygon } from '../../utilities/maths.ts'
 
 export class Area
 {
-    constructor(model)
+    game: Game
+    model: any
+    isIn: boolean
+    events: Events
+    references: References
+    objects: {
+        items: any[]
+        hideable: any[]
+    }
+    frustum: {
+        position: THREE.Vector2
+        radius: number
+        isIn: boolean | null
+        alwaysVisible: boolean
+        test: () => void
+    } | null
+
+    constructor(model: any)
     {
         this.game = Game.getInstance()
 
@@ -14,6 +31,11 @@ export class Area
         this.isIn = false
         this.events = new Events()
         this.references = new References()
+        this.objects = {
+            items: [],
+            hideable: []
+        }
+        this.frustum = null
 
         this.setObjects()
         this.setBounding()
@@ -23,17 +45,18 @@ export class Area
         {
             if(this.frustum)
                 this.frustum.test()
-                
-            if(typeof this.update === 'function' && (!this.frustum || this.frustum.isIn))
-                this.update()
+
+            if(typeof (this as any).update === 'function' && (!this.frustum || this.frustum.isIn))
+                (this as any).update()
         }, 10)
     }
 
     setObjects()
     {
-        this.objects = {}
-        this.objects.items = []
-        this.objects.hideable = []
+        this.objects = {
+            items: [],
+            hideable: []
+        }
         const children = [...this.model.children]
         for(const child of children)
         {
@@ -77,7 +100,7 @@ export class Area
             return
 
         zoneReference = zoneReference[0]
-        
+
         const position = zoneReference.position.clone()
         const radius = zoneReference.scale.x
         const zone = this.game.zones.create('cylinder', position, radius)
@@ -108,55 +131,57 @@ export class Area
         if(!zoneReference)
             return
 
-        this.frustum = {}
-        this.frustum.position = new THREE.Vector2(
-            zoneReference[0].position.x,
-            zoneReference[0].position.z
-        )
-        this.frustum.radius = zoneReference[0].scale.x
-        this.frustum.isIn = null
-        this.frustum.alwaysVisible = false
-        
-        this.frustum.test = () =>
-        {
-            const isIn = circleIntersectsPolygon(
-                this.frustum.position,
-                this.frustum.radius,
-                [
-                    this.game.view.optimalArea.quad2[0].offseted,
-                    this.game.view.optimalArea.quad2[1].offseted,
-                    this.game.view.optimalArea.quad2[2].offseted,
-                    this.game.view.optimalArea.quad2[3].offseted,
-                ]
-            )
-
-            if(
-                this.frustum.alwaysVisible ||
-                isIn
-            )
+        this.frustum = {
+            position: new THREE.Vector2(
+                zoneReference[0].position.x,
+                zoneReference[0].position.z
+            ),
+            radius: zoneReference[0].scale.x,
+            isIn: null,
+            alwaysVisible: false,
+            test: () =>
             {
-                if(this.frustum.isIn === false || this.frustum.isIn === null)
-                {
-                    for(const object3D of this.objects.hideable)
-                    {
-                        object3D.visible = true
-                    }
+                if(!this.frustum) return
 
-                    this.frustum.isIn = true
-                    this.events.trigger('frustumIn')
+                const isIn = circleIntersectsPolygon(
+                    this.frustum.position,
+                    this.frustum.radius,
+                    [
+                        this.game.view.optimalArea.quad2[0].offseted,
+                        this.game.view.optimalArea.quad2[1].offseted,
+                        this.game.view.optimalArea.quad2[2].offseted,
+                        this.game.view.optimalArea.quad2[3].offseted,
+                    ]
+                )
+
+                if(
+                    this.frustum.alwaysVisible ||
+                    isIn
+                )
+                {
+                    if(this.frustum.isIn === false || this.frustum.isIn === null)
+                    {
+                        for(const object3D of this.objects.hideable)
+                        {
+                            object3D.visible = true
+                        }
+
+                        this.frustum.isIn = true
+                        this.events.trigger('frustumIn')
+                    }
                 }
-            }
-            else
-            {
-                if(this.frustum.isIn === true || this.frustum.isIn === null)
+                else
                 {
-                    for(const object3D of this.objects.hideable)
+                    if(this.frustum.isIn === true || this.frustum.isIn === null)
                     {
-                        object3D.visible = false
-                    }
+                        for(const object3D of this.objects.hideable)
+                        {
+                            object3D.visible = false
+                        }
 
-                    this.frustum.isIn = false
-                    this.events.trigger('frustumOut')
+                        this.frustum.isIn = false
+                        this.events.trigger('frustumOut')
+                    }
                 }
             }
         }
