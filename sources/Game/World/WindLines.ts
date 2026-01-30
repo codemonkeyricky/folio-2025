@@ -1,6 +1,6 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
-import { attribute, cameraNormalMatrix, cameraPosition, cameraProjectionMatrix, cameraViewMatrix, color, cross, float, floor, Fn, If, modelNormalMatrix, modelViewMatrix, modelWorldMatrix, mul, positionGeometry, positionLocal, positionWorld, uniform, vec2, vec3, vec4, vertexIndex, viewport } from 'three/tsl'
+import { attribute, cameraProjectionMatrix, cameraViewMatrix, color, floor, Fn, modelWorldMatrix, mul, positionGeometry, uniform, vec3, vec4, vertexIndex } from 'three/tsl'
 import gsap from 'gsap'
 import { WindLineGeometry } from '../Geometries/WindLineGeometry.js'
 import { remapClamp } from '../utilities/maths.js'
@@ -8,7 +8,13 @@ import { MeshDefaultMaterial } from '../Materials/MeshDefaultMaterial.js'
 
 class WindLine
 {
-    constructor(thickness = 0.1, _tangent = vec3(0, 1, -1))
+    game: Game
+    available: boolean
+    thickness: ReturnType<typeof uniform>
+    progress: ReturnType<typeof uniform>
+    mesh: THREE.Mesh
+
+    constructor(thickness: number = 0.1, _tangent: ReturnType<typeof vec3> = vec3(0, 1, -1))
     {
         this.game = Game.getInstance()
 
@@ -42,7 +48,7 @@ class WindLine
             const finalThickness = mul(this.thickness, baseThickness, progressThickness)
 
             const sideStep = floor(vertexIndex.toFloat().mul(3).sub(2).div(3).mod(2)).sub(0.5)
-            const sideOffset = tangent.mul(sideStep.mul(finalThickness))
+            const sideOffset = mul(tangent, sideStep.mul(finalThickness))
             
             worldPosition.addAssign(vec4(sideOffset, 0))
 
@@ -59,6 +65,15 @@ class WindLine
 
 export class WindLines
 {
+    game: Game
+    debugPanel?: any
+    intervalRange: { min: number; max: number }
+    duration: number
+    translation: number
+    thickness: number
+    pool: WindLine[]
+    durationBinding: any
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -83,7 +98,7 @@ export class WindLines
             new WindLine()
         ]
 
-        const displayInterval = () =>
+        const displayInterval = (): void =>
         {
             this.display()
 
@@ -139,7 +154,7 @@ export class WindLines
         displayInterval()
     }
 
-    display()
+    display(): void
     {
         const windLine = this.pool.find(windLine => windLine.available)
 

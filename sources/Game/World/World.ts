@@ -3,7 +3,7 @@ import { Game } from '../Game.js'
 import { Floor } from './Floor.js'
 import { Grass } from './Grass.js'
 import { WaterSurface } from './WaterSurface.js'
-import { WindLines } from './WindLines.js'
+import { WindLines } from './WindLines.ts'
 import { Leaves } from './Leaves.js'
 import { Lightnings } from './Lightnings.js'
 import { Snow } from './Snow.js'
@@ -58,7 +58,7 @@ export class World {
             this.floor = new Floor(this.game)
             this.waterSurface = new WaterSurface(this.game)
             this.grass = new Grass(this.game)
-            this.windLines = new WindLines(this.game)
+            this.windLines = new WindLines()
             this.confetti = new Confetti(this.game)
             this.leaves = new Leaves(this.game)
             this.rain = new RainLines(this.game)

@@ -1,0 +1,73 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Start Vite Dev Server",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "isBackground": true
+    },
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Debug TypeScript in Chrome",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/sources",
+      "sourceMaps": true,
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*",
+        "webpack:///src/*": "${webRoot}/*",
+        "webpack:///*": "*",
+        "webpack:///./~/*": "${webRoot}/node_modules/*",
+        "meteor://💻app/*": "${webRoot}/*"
+      },
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ]
+    },
+    {
+      "type": "firefox",
+      "request": "launch",
+      "name": "Debug TypeScript in Firefox",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/sources",
+      "pathMappings": [
+        {
+          "url": "webpack:///sources",
+          "path": "${workspaceFolder}/sources"
+        }
+      ],
+      "skipFiles": [
+        "<node_internals>/**",
+        "${workspaceFolder}/node_modules/**"
+      ]
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug TypeScript Tests (if any)",
+      "program": "${workspaceFolder}/node_modules/.bin/vitest",
+      "args": ["run"],
+      "console": "integratedTerminal",
+      "internalConsoleOptions": "neverOpen",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Start Dev Server + Debug Chrome",
+      "configurations": ["Start Vite Dev Server", "Debug TypeScript in Chrome"],
+      "stopAll": true
+    },
+    {
+      "name": "Start Dev Server + Debug Firefox",
+      "configurations": ["Start Vite Dev Server", "Debug TypeScript in Firefox"],
+      "stopAll": true
+    }
+  ]
+}
