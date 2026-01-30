@@ -13,7 +13,7 @@ class WindLine {
     progress: ReturnType<typeof uniform>
     mesh: THREE.Mesh
 
-    constructor(thickness: number = 0.1, _tangent: ReturnType<typeof vec3> = vec3(0, 1, -1)) {
+    constructor(thickness: number = 0.1, _tangent: any = vec3(0, 1, -1)) {
         this.game = Game.getInstance()
 
         this.available = true
@@ -53,7 +53,7 @@ class WindLine {
             return cameraProjectionMatrix.mul(viewPosition)
         })()
 
-        this.mesh = new THREE.Mesh(geometry, material)
+        this.mesh = new THREE.Mesh(geometry, material as any)
         this.mesh.renderOrder = 1
         this.mesh.position.y = 2
         this.game.scene.add(this.mesh)
