@@ -147,7 +147,7 @@ declare module './Modals.js' {
     const module: any
     export default module
 }
-declare module './Monitoring.js' {
+declare module './Monitoring.ts' {
     const module: any
     export default module
 }

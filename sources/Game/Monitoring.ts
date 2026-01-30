@@ -3,6 +3,9 @@ import { Game } from './Game.js'
 
 export class Monitoring
 {
+    game: Game
+    stats?: Stats
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -18,11 +21,11 @@ export class Monitoring
             trackCPT: true,
             logsPerSecond: 4,
             graphsPerSecond: 30,
-            samplesLog: 40, 
-            samplesGraph: 10, 
-            precision: 1, 
+            samplesLog: 40,
+            samplesGraph: 10,
+            precision: 1,
             horizontal: false,
-            minimal: false, 
+            minimal: false,
             mode: 0
         })
 
