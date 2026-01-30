@@ -347,7 +347,7 @@ declare module './World/Bubble.js' {
     const module: any
     export default module
 }
-declare module './World/Bushes.js' {
+declare module './World/Bushes.ts' {
     const module: any
     export default module
 }
@@ -491,7 +491,7 @@ declare module './World/Trees.js' {
     const module: any
     export default module
 }
-declare module './World/Bushes.js' {
+declare module './World/Bushes.ts' {
     const module: any
     export default module
 }

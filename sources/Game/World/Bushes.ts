@@ -5,6 +5,11 @@ import { Game } from '../Game.js'
 
 export class Bushes
 {
+    game: Game
+    colorANode: THREE.Uniform<THREE.Color>
+    colorBNode: THREE.Uniform<THREE.Color>
+    foliage: Foliage
+
     constructor()
     {
         this.game = Game.getInstance()

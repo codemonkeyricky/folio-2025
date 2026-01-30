@@ -13,7 +13,7 @@ import { VisualTornado } from './VisualTornado.js'
 import { Flowers } from './Flowers.js'
 import { Bricks } from './Bricks.js'
 import { Trees } from './Trees.js'
-import { Bushes } from './Bushes.js'
+import { Bushes } from './Bushes.ts'
 import { Fireballs } from './Fireballs.js'
 import { RainLines } from './RainLines.js'
 import { Confetti } from './Confetti.js'
@@ -66,7 +66,7 @@ export class World {
             this.fireballs = new Fireballs(this.game)
             this.snow = new Snow(this.game)
             this.visualTornado = new VisualTornado(this.game)
-            this.bushes = new Bushes(this.game)
+            this.bushes = new Bushes()
             this.birchTrees = new Trees('Birch Tree', this.game.resources.birchTreesVisualModel.scene, this.game.resources.birchTreesReferencesModel.scene.children, new THREE.Color('#ff4f2b'), new THREE.Color('#ff903f'))
             this.oakTrees = new Trees('Oak Tree', this.game.resources.oakTreesVisualModel.scene, this.game.resources.oakTreesReferencesModel.scene.children, new THREE.Color('#b4b536'), new THREE.Color('#d8cf3b'))
             this.cherryTrees = new Trees('Cherry Tree', this.game.resources.cherryTreesVisualModel.scene, this.game.resources.cherryTreesReferencesModel.scene.children, new THREE.Color('#ff6d6d'), new THREE.Color('#ff9990'))
