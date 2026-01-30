@@ -1,6 +1,7 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
-import { attribute, cameraProjectionMatrix, cameraViewMatrix, color, floor, Fn, modelWorldMatrix, mul, positionGeometry, uniform, vec3, vec4, vertexIndex } from 'three/tsl'
+import { attribute, color, floor, Fn, modelWorldMatrix, mul, positionGeometry, uniform, vec3, vec4, vertexIndex } from 'three/tsl'
+import { cameraProjectionMatrix, cameraViewMatrix } from 'three/src/nodes/accessors/Camera.js'
 import gsap from 'gsap'
 import { WindLineGeometry } from '../Geometries/WindLineGeometry.js'
 import { remapClamp } from '../utilities/maths.js'
