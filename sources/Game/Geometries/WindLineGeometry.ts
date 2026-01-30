@@ -1,5 +1,5 @@
 import * as THREE from 'three/webgpu'
-import { LineGeometry } from './LineGeometry.ts'
+import { LineGeometry } from "./LineGeometry.js"
 
 export class WindLineGeometry extends LineGeometry {
     type: 'LineGeometry';

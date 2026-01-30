@@ -1,6 +1,6 @@
 import * as THREE from 'three/webgpu'
-import { Game } from '../Game.js'
-import { Foliage } from './Foliage.js'
+import { Game } from "../Game.js"
+import { Foliage } from "./Foliage.js"
 import { color, uniform } from 'three/tsl'
 
 interface TreeReference {

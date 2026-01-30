@@ -1,4 +1,4 @@
-import { Cycles } from './Cycles.js'
+import { Cycles } from "./Cycles.js"
 
 export class YearCycles extends Cycles
 {

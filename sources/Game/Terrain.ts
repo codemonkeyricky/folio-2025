@@ -1,5 +1,5 @@
 import * as THREE from 'three/webgpu';
-import { Game } from './Game.js'
+import { Game } from "./Game.js"
 import { color, Fn, mix, texture, uniform, vec2 } from 'three/tsl'
 
 interface ColorInfo {

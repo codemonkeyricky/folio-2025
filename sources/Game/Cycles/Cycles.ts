@@ -1,7 +1,7 @@
 import * as THREE from 'three/webgpu'
-import { Game } from '../Game.js'
-import { lerp, smoothstep } from '../utilities/maths.js'
-import { Events } from '../Events.js'
+import { Game } from "../Game.js"
+import { lerp, smoothstep } from "../utilities/maths.js"
+import { Events } from "../Events.js"
 import gsap from 'gsap'
 
 export class Cycles

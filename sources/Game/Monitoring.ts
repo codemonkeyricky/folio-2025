@@ -1,5 +1,5 @@
 import Stats from 'stats-gl'
-import { Game } from './Game.js'
+import { Game } from "./Game.js"
 
 export class Monitoring
 {

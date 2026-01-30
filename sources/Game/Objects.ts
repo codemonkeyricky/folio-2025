@@ -1,4 +1,4 @@
-import { Game } from './Game.js'
+import { Game } from "./Game.js"
 
 export interface Visual {
     object3D: any

@@ -1,5 +1,5 @@
 import { uniform } from 'three/tsl'
-import { Game } from './Game.js'
+import { Game } from "./Game.js"
 import { Pane } from 'tweakpane'
 
 export class Water

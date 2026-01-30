@@ -1,9 +1,9 @@
 import * as THREE from 'three/webgpu'
 import { pass, renderOutput } from 'three/tsl'
-import { bloom } from 'three/addons/tsl/display/BloomNode.js'
-import { Game } from './Game.js'
-import { Inspector } from 'three/addons/inspector/Inspector.js'
-import { cheapDOF } from './Passes/cheapDOF.js'
+import { bloom } from "three/addons/tsl/display/BloomNode.js"
+import { Game } from "./Game.js"
+import { Inspector } from "three/addons/inspector/Inspector.js"
+import { cheapDOF } from "./Passes/cheapDOF.js"
 
 declare module './Passes/cheapDOF.js' {
     const cheapDOF: any

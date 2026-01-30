@@ -1,8 +1,8 @@
 import * as THREE from 'three/webgpu'
-import { Game } from '../Game.js'
+import { Game } from "../Game.js"
 import { uniform, mix, smoothstep, rotateUV, uv, texture, float, Fn, positionLocal, normalWorld, screenUV, vec2, vec4 } from 'three/tsl'
-import { mergeGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
-import { MeshDefaultMaterial } from '../Materials/MeshDefaultMaterial.js'
+import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js"
+import { MeshDefaultMaterial } from "../Materials/MeshDefaultMaterial.js"
 import * as alea from 'seedrandom'
 
 const rng = new (alea as any)('foliage')

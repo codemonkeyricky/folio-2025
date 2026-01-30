@@ -1,6 +1,6 @@
 import * as THREE from 'three/webgpu'
-import { Game } from './Game.js'
-import CubeRenderTarget from 'three/src/renderers/common/CubeRenderTarget.js'
+import { Game } from "./Game.js"
+import CubeRenderTarget from "three/src/renderers/common/CubeRenderTarget.js"
 
 export class PreRenderer
 {

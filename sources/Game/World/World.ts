@@ -1,23 +1,23 @@
 import * as THREE from 'three/webgpu'
-import { Game } from '../Game.js'
-import { Floor } from './Floor.js'
-import { Grass } from './Grass.js'
-import { WaterSurface } from './WaterSurface.js'
-import { WindLines } from './WindLines.ts'
-import { Leaves } from './Leaves.js'
-import { Lightnings } from './Lightnings.js'
-import { Snow } from './Snow.js'
-import { Whispers } from './Whispers.js'
-import { VisualVehicle } from './VisualVehicle.js'
-import { VisualTornado } from './VisualTornado.js'
-import { Flowers } from './Flowers.js'
-import { Bricks } from './Bricks.js'
-import { Trees } from './Trees.js'
-import { Bushes } from './Bushes.ts'
-import { Fireballs } from './Fireballs.js'
-import { RainLines } from './RainLines.js'
-import { Confetti } from './Confetti.js'
-import { Intro } from './Intro.js'
+import { Game } from "../Game.js"
+import { Floor } from "./Floor.js"
+import { Grass } from "./Grass.js"
+import { WaterSurface } from "./WaterSurface.js"
+import { WindLines } from "./WindLines.js"
+import { Leaves } from "./Leaves.js"
+import { Lightnings } from "./Lightnings.js"
+import { Snow } from "./Snow.js"
+import { Whispers } from "./Whispers.js"
+import { VisualVehicle } from "./VisualVehicle.js"
+import { VisualTornado } from "./VisualTornado.js"
+import { Flowers } from "./Flowers.js"
+import { Bricks } from "./Bricks.js"
+import { Trees } from "./Trees.js"
+import { Bushes } from "./Bushes.js"
+import { Fireballs } from "./Fireballs.js"
+import { RainLines } from "./RainLines.js"
+import { Confetti } from "./Confetti.js"
+import { Intro } from "./Intro.js"
 
 
 export class World {
