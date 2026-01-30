@@ -1,10 +1,25 @@
 import { uniform } from 'three/tsl'
 import { Events } from './Events.js'
 import { Game } from './Game.js'
-import gsap from 'gsap'
 
 export class Ticker
 {
+    game: Game
+    elapsed: number
+    delta: number
+    maxDelta: number
+    scale: number
+    deltaScaled: number
+    elapsedScaled: number
+    waits: [number, () => void][]
+    lastDeltas: number[]
+    deltaAverage: number
+    elapsedUniform: any
+    deltaUniform: any
+    elapsedScaledUniform: any
+    deltaScaledUniform: any
+    events: Events
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -17,6 +32,7 @@ export class Ticker
         this.elapsedScaled = 0
         this.waits = []
         this.lastDeltas = []
+        this.deltaAverage = 1 / 60
 
         this.elapsedUniform = uniform(this.elapsed)
         this.deltaUniform = uniform(this.delta)
@@ -26,7 +42,7 @@ export class Ticker
         this.events = new Events()
     }
 
-    update(elapsed)
+    update(elapsed: number)
     {
         const elapsedSeconds = elapsed / 1000
         this.delta = Math.min(elapsedSeconds - this.elapsed, this.maxDelta)
@@ -41,7 +57,7 @@ export class Ticker
         {
             this.lastDeltas.splice(count, arrayLength - count)
         }
-        this.deltaAverage = this.lastDeltas.reduce((total, value) => total + value) / arrayLength
+        this.deltaAverage = this.lastDeltas.reduce((total: number, value: number) => total + value) / arrayLength
 
 
         this.elapsedUniform.value = this.elapsed
@@ -61,11 +77,11 @@ export class Ticker
                 i--
             }
         }
-        
+
         this.events.trigger('tick')
     }
 
-    wait(frames, callback)
+    wait(frames: number, callback: () => void)
     {
         this.waits.push([ frames, callback ])
     }

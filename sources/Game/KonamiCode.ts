@@ -4,6 +4,9 @@ import { VisualVehicle } from './World/VisualVehicle.js'
 
 export class KonamiCode
 {
+    game: Game
+    activationCount: number
+
     constructor(once = false)
     {
         this.game = Game.getInstance()
@@ -23,7 +26,7 @@ export class KonamiCode
             [ 'KeyQ', 'KeyA' ],
         ]
 
-        const callback = (event) =>
+        const callback = (event: KeyboardEvent) =>
         {
             const sequenceItem = sequence[index]
 

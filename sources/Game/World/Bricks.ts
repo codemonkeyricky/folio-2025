@@ -1,12 +1,11 @@
 import { Game } from '../Game.js'
-import * as THREE from 'three/webgpu'
 import { InstancedGroup } from '../InstancedGroup.ts'
 
 export class Bricks
 {
     game: Game
     objects: any[]
-    instancedGroup: InstancedGroup
+    instancedGroup: any
 
     constructor()
     {
@@ -19,9 +18,9 @@ export class Bricks
         base.receiveShadow = true
         base.frustumCulled = false
 
-        // Update materials
+        // Update materials 
         this.game.materials.updateObject(base)
-
+        
         // Objects
         this.objects = []
         for(const reference of references)
@@ -45,7 +44,7 @@ export class Bricks
                         colliders: [ { shape: 'cuboid', parameters: [ 0.75 * 0.75, 0.5 * 0.75, 1 * 0.75 ], category: 'object' } ],
                         waterGravityMultiplier: - 1,
                         contactThreshold: 15,
-                        onCollision: (force: number, position: THREE.Vector3) =>
+                        onCollision: (force: any, position: any) =>
                         {
                             this.game.audio.groups.get('hitBrick').playRandomNext(force, position)
                         }
