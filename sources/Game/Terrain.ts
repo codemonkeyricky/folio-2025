@@ -11,14 +11,14 @@ export class Terrain
 {
     private readonly game: Game;
     private readonly subdivision: number;
-    private readonly size: number;
+    readonly size: number;
     private debugPanel: any;
     private colors!: ColorInfo[];
     private gradientTexture!: THREE.Texture;
     private grassColorUniform: any;
     private tracksDelta: any;
-    private terrainNode!: any;
-    private colorNode!: any;
+    terrainNode!: any;
+    colorNode!: any;
 
     constructor()
     {
