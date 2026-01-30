@@ -1,0 +1,7 @@
+Repeat the following until step 1 returns nothing:
+    1. Find a source .js file with less than 40 lines of code (ie. fd js$  | grep source | xargs wc | ... ) 
+    2. Rename the .js .ts 
+    3. Run "npm run build" and fix all errors
+    4. Make sure no runtime error 
+    5. Commit the changes
+    5. Start new context
