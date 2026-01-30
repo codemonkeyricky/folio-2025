@@ -23,15 +23,24 @@ declare module './ClosingManager.js' {
     const module: any
     export default module
 }
+declare module './Cycles/Cycles.ts' {
+    const module: any
+    export default module
+}
+declare module './Cycles/DayCycles.ts' {
+    const module: any
+    export default module
+}
+declare module './Cycles/YearCycles.ts' {
+    const module: any
+    export default module
+}
+
 declare module './Cycles/Cycles.js' {
     const module: any
     export default module
 }
 declare module './Cycles/DayCycles.js' {
-    const module: any
-    export default module
-}
-declare module './Cycles/YearCycles.js' {
     const module: any
     export default module
 }
@@ -43,7 +52,7 @@ declare module './Easter.js' {
     const module: any
     export default module
 }
-declare module './Events.js' {
+declare module './Events.ts' {
     const module: any
     export default module
 }

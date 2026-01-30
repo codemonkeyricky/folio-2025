@@ -1,12 +1,29 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
-import { lerp, remap, smoothstep } from '../utilities/maths.js'
+import { lerp, smoothstep } from '../utilities/maths.js'
 import { Events } from '../Events.js'
 import gsap from 'gsap'
 
 export class Cycles
 {
-    constructor(name = 'Cycles', duration = 10, forcedProgress = null, manual = false)
+    game: Game
+    name: string
+    duration: number
+    absoluteProgress: number
+    newAbsoluteProgress: number
+    progress: number
+    progressDelta: number
+    keyframesList: any[]
+    properties: any
+    punctualEvents: Map<string, { name: string, progress: number }>
+    intervalEvents: Map<string, { name: string, startProgress: number, endProgress: number, inInterval: boolean }>
+    events: Events
+    debugPanel: any
+    newAbsoluteProgressBinding: any
+    override: any
+    values: any
+
+    constructor(name = 'Cycles', duration = 10, forcedProgress: number | null = null, manual = false)
     {
         this.game = Game.getInstance()
 
@@ -25,7 +42,7 @@ export class Cycles
         this.progress = this.absoluteProgress % 1
         this.progressDelta = 1
         this.keyframesList = []
-        this.properties = []
+        this.properties = {}
         this.punctualEvents = new Map()
         this.intervalEvents = new Map()
         this.events = new Events()
@@ -74,7 +91,7 @@ export class Cycles
         ]
     }
 
-    getIntervalDescriptions()
+    getIntervalDescriptions(): any[]
     {
         return []
     }
@@ -89,16 +106,16 @@ export class Cycles
         }
     }
 
-    createKeyframes(steps)
+    createKeyframes(steps: any)
     {
-        const keyframes = {}
+        const keyframes: any = {}
         keyframes.steps = steps
 
         for(const key in steps[0].properties)
         {
             if(key !== 'stop')
             {
-                const property = {}
+                const property: any = {}
                 property.value = steps[0].properties[key]
                 property.overrideValue = null
 
@@ -140,7 +157,7 @@ export class Cycles
         return keyframes
     }
 
-    update(firstFrame = false)
+    update(firstFrame: boolean = false)
     {
         // New absolute progress
         this.newAbsoluteProgressBinding.update()
@@ -151,7 +168,7 @@ export class Cycles
         const newProgress = this.absoluteProgress % 1
 
         // Test punctual events
-        this.punctualEvents.forEach((punctualEvent) =>
+        this.punctualEvents.forEach((punctualEvent: any) =>
         {
             if(newProgress >= punctualEvent.progress && this.progress < punctualEvent.progress)
             {
@@ -166,7 +183,7 @@ export class Cycles
         })
 
         // Test interval events
-        this.intervalEvents.forEach((intervalEvent) =>
+        this.intervalEvents.forEach((intervalEvent: any) =>
         {
             const inInterval = newProgress > intervalEvent.startProgress && newProgress < intervalEvent.endProgress
 
@@ -255,8 +272,8 @@ export class Cycles
         this.override = {}
         this.override.strength = 0
         this.override.progress = null
-        
-        this.override.start = (values = {}, duration = 5) =>
+
+        this.override.start = (values: any = {}, duration: number = 5) =>
         {
             // Properties
             for(const propertyKey in this.properties)
@@ -280,7 +297,7 @@ export class Cycles
                 gsap.to(this.override, { strength: 1, duration, overwrite: true })
         }
 
-        this.override.end = (duration = 5) =>
+        this.override.end = (duration: number = 5) =>
         {
             // Transition
             if(duration === 0)
@@ -290,14 +307,14 @@ export class Cycles
         }
     }
 
-    addPunctualEvent(name, progress)
+    addPunctualEvent(name: string, progress: number)
     {
         this.punctualEvents.set(name, { name, progress })
     }
 
     setIntervals()
     {
-        const descriptions = this.getIntervalDescriptions()
+        const descriptions: any[] = this.getIntervalDescriptions()
 
         for(const description of descriptions)
         {
@@ -305,8 +322,13 @@ export class Cycles
         }
     }
 
-    addIntervalEvent(name, startProgress, endProgress)
+    addIntervalEvent(name: string, startProgress: number, endProgress: number)
     {
         this.intervalEvents.set(name, { name, startProgress, endProgress, inInterval: false })
+    }
+
+    addIntervalEventFromDescription(description: any)
+    {
+        this.addIntervalEvent(description.name, description.start, description.end)
     }
 }

@@ -1,11 +1,13 @@
 export class Events
 {
+    callbacks: any
+
     constructor()
     {
         this.callbacks = {}
     }
 
-    on(_name, _callback, _order = 1)
+    on(_name: string, _callback: Function, _order: number = 1)
     {
         // Create callbacks array if needed
         if(!(this.callbacks[_name] instanceof Array))
@@ -21,7 +23,7 @@ export class Events
         return this
     }
 
-    off(_name, _callback = null)
+    off(_name: string, _callback: Function | null = null)
     {
         // Remove specific
         if(typeof _callback === 'function')
@@ -47,7 +49,7 @@ export class Events
         return this
     }
 
-    trigger(_name, _arguments = [])
+    trigger(_name: string, _arguments: any[] = [])
     {
         if(this.callbacks[_name] instanceof Array)
         {
@@ -59,7 +61,7 @@ export class Events
                 }
             }
         }
-        
+
         return this
     }
 }
