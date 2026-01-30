@@ -4,19 +4,19 @@ import CubeRenderTarget from 'three/src/renderers/common/CubeRenderTarget.js'
 
 export class PreRenderer
 {
-    static render()
+    static render(): void
     {
         const game = Game.getInstance()
 
         // Setup
         const renderTarget = new CubeRenderTarget(32)
-        
+
         const cubeCamera = new THREE.CubeCamera(1, 100000, renderTarget)
         game.scene.add(cubeCamera)
 
         // Make all visible
-        const invisibles = []
-        game.scene.traverse((child) =>
+        const invisibles: THREE.Object3D[] = []
+        game.scene.traverse((child: THREE.Object3D) =>
         {
             if(child.visible === false && typeof child.userData.preventPreRender === 'undefined')
             {

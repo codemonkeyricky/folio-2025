@@ -191,7 +191,7 @@ declare module './Player.js' {
     const module: any
     export default module
 }
-declare module './PreRenderer.js' {
+declare module './PreRenderer.ts' {
     const module: any
     export default module
 }
