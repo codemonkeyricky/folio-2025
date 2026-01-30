@@ -1,8 +1,13 @@
 import { Game } from '../Game.js'
+import * as THREE from 'three/webgpu'
 import { InstancedGroup } from '../InstancedGroup.ts'
 
 export class Fences
 {
+    game: Game
+    objects: any[]
+    instancedGroup: InstancedGroup
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -15,8 +20,8 @@ export class Fences
 
         // Descriptions > To extract colliders
         const descriptions = this.game.objects.getFromModel(base, {}, {})
-        
-        // Update materials 
+
+        // Update materials
         this.game.materials.updateObject(base)
 
         // Setup base
@@ -43,7 +48,7 @@ export class Fences
                     colliders: descriptions[1].colliders,
                     waterGravityMultiplier: - 1,
                     contactThreshold: 10,
-                    onCollision: (force, position) =>
+                    onCollision: (_force: number, _position: THREE.Vector3) =>
                     {
                         // this.game.audio.groups.get('hitMetal').playRandomNext(force, position)
                     }
