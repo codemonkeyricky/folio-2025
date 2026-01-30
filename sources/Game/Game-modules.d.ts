@@ -227,7 +227,7 @@ declare module './Tabs.js' {
     const module: any
     export default module
 }
-declare module './Terrain.js' {
+declare module './Terrain.ts' {
     const module: any
     export default module
 }
