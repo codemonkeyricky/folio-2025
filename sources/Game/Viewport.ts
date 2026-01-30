@@ -2,12 +2,20 @@ import { Events } from './Events.js'
 
 export class Viewport
 {
-    constructor(domElement)
+    domElement!: HTMLElement
+    events!: Events
+    width!: number
+    height!: number
+    ratio!: number
+    pixelRatioPure!: number
+    pixelRatioMax!: number
+    pixelRatio!: number
+
+    constructor(domElement: HTMLElement)
     {
         this.domElement = domElement
-
         this.events = new Events()
-        
+
         this.measure()
         this.setResize()
     }
@@ -28,7 +36,7 @@ export class Viewport
     setResize()
     {
         const throttleDuration = 400
-        let throttleTimeout = null
+        let throttleTimeout: number | null = null
         addEventListener('resize', () =>
         {
             this.measure()

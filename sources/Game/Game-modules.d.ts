@@ -272,7 +272,7 @@ declare module './View.js' {
     const module: any
     export default module
 }
-declare module './Viewport.js' {
+declare module './Viewport.ts' {
     const module: any
     export default module
 }
