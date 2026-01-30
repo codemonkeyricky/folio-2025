@@ -3,6 +3,13 @@ import * as THREE from 'three/webgpu'
 
 export class PhysicsWireframe
 {
+    game: Game
+    active: boolean
+    geometry: THREE.BufferGeometry
+    material: any
+    lineSegments: THREE.LineSegments
+    debugPanel: any
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -30,7 +37,7 @@ export class PhysicsWireframe
                 title: 'Wireframe',
                 expanded: true,
             })
-            
+
             this.debugPanel.addBinding(this, 'active', { label: 'debug' }).on('change', () =>
             {
                 if(this.active)
@@ -40,7 +47,7 @@ export class PhysicsWireframe
             })
         }
     }
-    
+
     update()
     {
         if(!this.active)
@@ -48,12 +55,10 @@ export class PhysicsWireframe
 
         const { vertices, colors } = this.game.physics.world.debugRender()
 
-        this.geometry.attributes.position.array = vertices
-        this.geometry.attributes.position.count = vertices.length / 3
+        ;(this.geometry.attributes.position as any).array = vertices
         this.geometry.attributes.position.needsUpdate = true
 
-        this.geometry.attributes.color.array = colors
-        this.geometry.attributes.color.count = colors.length / 4
+        ;(this.geometry.attributes.color as any).array = colors
         this.geometry.attributes.color.needsUpdate = true
     }
 }
