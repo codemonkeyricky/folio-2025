@@ -1,27 +1,27 @@
 import { Game } from '../Game.js'
+import * as THREE from 'three/webgpu'
 import { InstancedGroup } from '../InstancedGroup.ts'
 
-export class Lanterns
+export class Bricks
 {
+    game: Game
+    objects: any[]
+    instancedGroup: InstancedGroup
+
     constructor()
     {
         this.game = Game.getInstance()
 
         // Base and references
-        const [ base, references ] = InstancedGroup.getBaseAndReferencesFromInstances(this.game.resources.lanternsModel.scene.children)
+        const [ base, references ] = InstancedGroup.getBaseAndReferencesFromInstances(this.game.resources.bricksModel.scene.children)
 
-        // Setup base
-        for(const child of base.children)
-        {
-            child.name = child.name.replace(/[0-9]+$/i, '') // Set clear name to retrieve it later as instances
-            child.castShadow = true
-            child.receiveShadow = true
-            child.frustumCulled = false
-        }
+        base.castShadow = true
+        base.receiveShadow = true
+        base.frustumCulled = false
 
-        // Update materials 
+        // Update materials
         this.game.materials.updateObject(base)
-        
+
         // Objects
         this.objects = []
         for(const reference of references)
@@ -42,12 +42,12 @@ export class Lanterns
                         friction: 0.7,
                         mass: 0.1,
                         sleeping: true,
-                        colliders: [ { shape: 'cuboid', parameters: [ 0.7 * 0.5, 1 * 0.5, 0.7 * 0.5 ], category: 'object' } ],
+                        colliders: [ { shape: 'cuboid', parameters: [ 0.75 * 0.75, 0.5 * 0.75, 1 * 0.75 ], category: 'object' } ],
                         waterGravityMultiplier: - 1,
-                        contactThreshold: 10,
-                        onCollision: (force, position) =>
+                        contactThreshold: 15,
+                        onCollision: (force: number, position: THREE.Vector3) =>
                         {
-                            this.game.audio.groups.get('hitMetal').playRandomNext(force, position)
+                            this.game.audio.groups.get('hitBrick').playRandomNext(force, position)
                         }
                     },
                 )
