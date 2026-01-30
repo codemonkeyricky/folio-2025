@@ -1,6 +1,8 @@
 export class References
 {
-    constructor(model)
+    items: Map<string, any>
+
+    constructor(model?: any)
     {
         this.items = new Map()
 
@@ -8,9 +10,9 @@ export class References
             this.parse(model)
     }
 
-    parse(object)
+    parse(object: any)
     {
-        object.traverse(_child =>
+        object.traverse((_child: any) =>
         {
             const name = _child.name
 
@@ -20,7 +22,7 @@ export class References
             {
                 // Extract name without "reference" and without number at the end
                 const referenceName = matches[1].charAt(0).toLowerCase() + matches[1].slice(1)
-                
+
                 // Create / save in array
                 if(!this.items.has(referenceName))
                     this.items.set(referenceName, [_child])
@@ -30,11 +32,11 @@ export class References
         })
     }
 
-    getStartingWith(searched)
+    getStartingWith(searched: string)
     {
         const items = new Map()
 
-        this.items.forEach((value, name) =>
+        this.items.forEach((value: any[], name: string) =>
         {
             if(name.startsWith(searched))
             {
