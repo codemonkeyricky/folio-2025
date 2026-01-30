@@ -168,9 +168,9 @@ declare module './Overlay.js' {
     const module: any
     export default module
 }
-declare module './Passes/cheapDOF.js' {
-    const module: any
-    export default module
+declare module './Passes/cheapDOF.ts' {
+    const cheapDOF: any
+    export default cheapDOF
 }
 declare module './Physics/Physics.js' {
     const module: any
@@ -203,6 +203,10 @@ declare module './RayCursor.js' {
 declare module './References.js' {
     const module: any
     export default module
+}
+declare module './Passes/cheapDOF.ts' {
+    const cheapDOF: any
+    export default cheapDOF
 }
 declare module './Rendering.js' {
     const module: any
