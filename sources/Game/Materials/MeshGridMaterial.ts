@@ -39,7 +39,7 @@ const toTriplanarUv = Fn(([ position, mask ]) =>
     return uv
 })
 
-const toGrid = Fn(([uv, scale, thickness, offset, cross]) =>
+const toGrid = Fn(([ uv, scale, thickness, offset, cross ]) =>
 {
     const referenceUv = uv.div(scale).add(offset)
     const crossGrid = step(referenceUv.fract().sub(0.5).abs(), cross.oneMinus().mul(0.5))
@@ -48,9 +48,8 @@ const toGrid = Fn(([uv, scale, thickness, offset, cross]) =>
     return mix(grid.x, 1, grid.y)
 })
 
-const toAntialiasedGrid = Fn(([uv, scale, thickness, offset, cross, derivateMask]) =>
+const toAntialiasedGrid = Fn(([ uv, scale, thickness, offset, cross, derivateMask ]) =>
 {
-    // Based on https://bgolus.medium.com/the-best-darn-grid-shader-yet-727f9278b9d8
     const lineWidth = thickness
     const referenceUv = uv.div(scale).add(offset)
     const uvDeriv = referenceUv.fwidth().mul(derivateMask)
@@ -69,6 +68,12 @@ const toAntialiasedGrid = Fn(([uv, scale, thickness, offset, cross, derivateMask
 
 class MeshGridMaterialLine
 {
+    color: any
+    scale: any
+    thickness: any
+    cross: any
+    offset: any
+
     constructor(_color = 0xffffff, scale = 1, thickness = 0.05, cross = 1, offset = vec2(0))
     {
         this.color = uniform(color(_color))
@@ -81,7 +86,17 @@ class MeshGridMaterialLine
 
 class MeshGridMaterial extends NodeMaterial
 {
-    constructor(parameters)
+    normals: boolean
+    lights: boolean
+    isMeshGridMaterial: boolean
+    testNode?: any
+    scaleNode: any
+    reference: string
+    antialiased: boolean
+    color: any
+    lines: MeshGridMaterialLine[]
+
+    constructor(parameters?: any)
     {
         super()
         
@@ -140,12 +155,12 @@ class MeshGridMaterial extends NodeMaterial
         this.outputNode = vec4(gridColor, 1)
     }
 
-    get scale()
+    get scale(): number
     {
         return this.scaleNode.value
     }
 
-    set scale(value)
+    set scale(value: number)
     {
         this.scaleNode.value = value
     }

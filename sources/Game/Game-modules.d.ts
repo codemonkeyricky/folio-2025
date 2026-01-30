@@ -135,7 +135,7 @@ declare module './Materials/MeshDefaultMaterial.js' {
     const module: any
     export default module
 }
-declare module './Materials/MeshGridMaterial.js' {
+declare module './Materials/MeshGridMaterial.ts' {
     const module: any
     export default module
 }
