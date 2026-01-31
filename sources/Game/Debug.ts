@@ -3,46 +3,32 @@ import { Pane } from 'tweakpane'
 import * as EssentialsPlugin from '@tweakpane/plugin-essentials'
 import * as CamerakitPlugin from '@tweakpane/plugin-camerakit'
 
-interface ManualBinding {
-    manual: boolean
-    manualValue: any
-    update: () => void
-    instance?: any
-}
-
 export class Debug
 {
-    active: boolean
-    panel: any
+    active!: boolean
+    panel!: Pane
 
     constructor()
     {
 
-        this.active = !!location.hash.match(/debug/i)
+        this.active = location.hash.match(/debug/i) !== null
 
         if(this.active)
         {
             this.panel = new Pane()
             this.panel.registerPlugin(EssentialsPlugin)
             this.panel.registerPlugin(CamerakitPlugin)
-
-            addEventListener('keydown', (event: KeyboardEvent) =>
-            {
-                if(event.code === 'KeyH')
-                    this.panel.hidden = !this.panel.hidden
-            })
         }
     }
 
-    addManualBinding(panel: any, object: any, property: string, settings: any, update: () => any, manual: boolean = false): ManualBinding
+    addManualBinding(panel: any, object: any, property: any, settings: any, update: any, manual = false)
     {
-        const binding: ManualBinding = {
-            manual,
-            manualValue: object[property],
-            update: () =>
-            {
-                object[property] = binding.manual ? binding.manualValue : update()
-            }
+        const binding: any = {}
+        binding.manual = manual
+        binding.manualValue = object[property]
+        binding.update = () =>
+        {
+            object[property] = binding.manual ? binding.manualValue : update()
         }
 
         if(this.active)
@@ -73,31 +59,30 @@ export class Debug
         return binding
     }
 
-    addThreeColorBinding(panel: any, object: any, label: string): any
+    addThreeColorBinding(panel: any, object: any, label: any)
     {
-        return panel.addBinding({ color: (object as any).getHex(THREE.SRGBColorSpace) }, 'color', { label: label, view: 'color' })
-                    .on('change', (tweak: any) => { (object as any).set(tweak.value) })
+        return panel.addBinding({ color: object.getHex(THREE.SRGBColorSpace) }, 'color', { label: label, view: 'color' })
+                    .on('change', (tweak: any) => { object.set(tweak.value) })
     }
 
-    addButtons(panel: any, buttons: any, title: string = '')
+    addButtons(panel: any, buttons: any, title = '')
     {
-        const buttonKeys = Object.keys(buttons) as string[]
+        const buttonKeys = Object.keys(buttons)
 
-        (panel as any)
+        panel
             .addBlade({
                 view: 'buttongrid',
                 size: [ buttonKeys.length, 1 ],
-                cells: (x: number, y: number) => ({
-                    title: buttonKeys[y][x]
+                cells: (x: any, y: any) => ({
+                    title: [
+                        buttonKeys,
+                    ][y][x],
                 }),
                 label: title,
             })
-            .on('click', (event: any) => {
-                const title = event.cell.title
-                const buttonFunc = buttons[title]
-                if (buttonFunc) {
-                    buttonFunc(title)
-                }
+            .on('click', (event: any) =>
+            {
+                buttons[event.cell.title](event.cell.title)
             })
     }
 }
