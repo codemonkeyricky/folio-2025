@@ -5,6 +5,16 @@ import { MeshDefaultMaterial } from '../Materials/MeshDefaultMaterial.js'
 
 export class Scenery
 {
+    game!: Game
+    references!: References
+    road!: {
+        color: any
+        glitterScarcity: any
+        glitterLighten: any
+        middleLighten: any
+        body: any
+    }
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -36,28 +46,29 @@ export class Scenery
 
         this.setRoad()
     }
-    
+
     setRoad()
     {
-        this.road = {}
+        this.road = {
+            color: uniform(color('#383039')),
+            glitterScarcity: uniform(0.1),
+            glitterLighten: uniform(0.28),
+            middleLighten: uniform(0.1),
+            body: null as any
+        }
 
         // Mesh and material
         const mesh = this.references.items.get('road')[0]
-        
-        this.road.color = uniform(color('#383039'))
-        this.road.glitterScarcity = uniform(0.1)
-        this.road.glitterLighten = uniform(0.28)
-        this.road.middleLighten = uniform(0.1)
 
         const colorNode = Fn(() =>
         {
             const glitterUv = positionWorld.xz.mul(0.2)
             const glitter = texture(this.game.noises.hash, glitterUv).r
-            
+
             const glitterLighten = glitter.remap(this.road.glitterScarcity.oneMinus(), 1, 0, this.road.glitterLighten)
 
             // return vec3(glitterLighten)
-            
+
             const middleLighten = uv().y.mul(PI).sin().mul(this.road.middleLighten)
 
             const baseColor = this.road.color.toVar()
@@ -76,7 +87,6 @@ export class Scenery
 
         // Physics
         this.road.body = mesh.userData.object.physical.body
-        this.road.body.setEnabled(false)
 
         // Debug
         if(this.game.debug.active)
