@@ -1,5 +1,5 @@
 import * as THREE from 'three/webgpu'
-import { Area } from './Area.ts'
+import { Area } from './Area.js'
 
 export class ToiletArea extends Area
 {
@@ -49,7 +49,7 @@ export class ToiletArea extends Area
 
     update()
     {
-        if(!this.cabin.down && !this.cabin.body.isSleeping())
+        if(!this.cabin.down && this.cabin.body && !this.cabin.body.isSleeping())
         {
             const cabinUp = new THREE.Vector3(0, 1, 0)
             cabinUp.applyQuaternion(this.cabin.body.rotation())

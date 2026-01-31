@@ -2,7 +2,7 @@ import * as THREE from 'three/webgpu'
 import { Events } from '../../Events.js'
 import { Game } from '../../Game.js'
 import { References } from '../../References.js'
-import { circleIntersectsPolygon } from '../../utilities/maths.ts'
+import { circleIntersectsPolygon } from '../../utilities/maths.js'
 
 export class Area
 {
@@ -41,7 +41,7 @@ export class Area
         this.setBounding()
         this.setFrustum()
 
-        this.game.ticker.events.on('tick', () =>
+        this.game.ticker?.events?.on('tick', () =>
         {
             if(this.frustum)
                 this.frustum.test()
@@ -83,7 +83,8 @@ export class Area
                     typeof child.userData.preventFrustum === 'undefined' || child.userData.preventFrustum === false
                 )
                 {
-                    this.objects.hideable.push(object.visual.object3D)
+                    if(object.visual.object3D)
+                        this.objects.hideable.push(object.visual.object3D)
                 }
 
             }

@@ -25,7 +25,7 @@ export class InstancedGroup
 
         this.setMeshes()
 
-        if(autoUpdate)
+        if(autoUpdate && this.game.ticker?.events)
         {
             this.game.ticker.events.on('tick', () =>
             {
@@ -42,7 +42,7 @@ export class InstancedGroup
 
         this.group.traverse((_child: any) =>
         {
-            if(_child.isMesh)
+            if(_child && _child.isMesh)
             {
                 const mesh: any = {
                     instance: null,
@@ -59,7 +59,8 @@ export class InstancedGroup
                 mesh.instance.castShadow = _child.castShadow
                 mesh.instance.receiveShadow = _child.receiveShadow
                 mesh.instance.frustumCulled = _child.frustumCulled
-                this.game.scene.add(mesh.instance)
+                if(this.game.scene)
+                    this.game.scene.add(mesh.instance)
 
                 this.meshes.push(mesh)
             }

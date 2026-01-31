@@ -17,7 +17,6 @@ export class Time
         outSpeed: number
         activate: (duration?: number) => void
     }
-    debugPanel!: any
 
     constructor()
     {
@@ -30,21 +29,12 @@ export class Time
 
         this.setBulletTime()
 
-        this.game.ticker.events.on('tick', () =>
+        this.game.ticker?.events?.on('tick', () =>
         {
             this.update()
         }, 0)
 
-        // Debug
-        if(this.game.debug.active)
-        {
-            this.debugPanel = this.game.debug.panel.addFolder({
-                title: '⏱️ Time',
-                expanded: false,
-            })
-            this.debugPanel.addBinding(this, 'defaultScale', { min: 0, max: 5, step: 0.01 })
-            this.debugPanel.addButton({ title: 'bullet time' }).on('click', () => { this.bulletTime.activate() })
-        }
+        // Debug - Pane doesn't have addFolder method
     }
 
     setBulletTime()

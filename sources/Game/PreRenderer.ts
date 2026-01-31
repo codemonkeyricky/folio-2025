@@ -12,11 +12,11 @@ export class PreRenderer
         const renderTarget = new CubeRenderTarget(32)
 
         const cubeCamera = new THREE.CubeCamera(1, 100000, renderTarget)
-        game.scene.add(cubeCamera)
+        game.scene?.add(cubeCamera)
 
         // Make all visible
         const invisibles: THREE.Object3D[] = []
-        game.scene.traverse((child: THREE.Object3D) =>
+        game.scene?.traverse((child: THREE.Object3D) =>
         {
             if(child.visible === false && typeof child.userData.preventPreRender === 'undefined')
             {
@@ -26,7 +26,8 @@ export class PreRenderer
         })
 
         // Force render
-        cubeCamera.update(game.rendering.renderer, game.scene)
+        if(game.rendering?.renderer && game.scene)
+            cubeCamera.update(game.rendering.renderer, game.scene)
 
         // Hide back
         for(const child of invisibles)

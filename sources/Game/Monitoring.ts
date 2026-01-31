@@ -29,8 +29,11 @@ export class Monitoring
             mode: 0
         })
 
-        this.stats.init(this.game.rendering.renderer)
-        document.body.append(this.stats.dom)
+        if(this.game.rendering?.renderer)
+        {
+            this.stats.init(this.game.rendering.renderer)
+            document.body.append(this.stats.dom)
+        }
 
         // // Update
         // this.game.ticker.events.on('tick', () =>

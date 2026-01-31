@@ -8,7 +8,6 @@ export class PhysicsWireframe
     geometry: THREE.BufferGeometry
     material: any
     lineSegments: THREE.LineSegments
-    debugPanel: any
 
     constructor()
     {
@@ -23,29 +22,18 @@ export class PhysicsWireframe
 
         this.lineSegments = new THREE.LineSegments(this.geometry, this.material)
 
-        if(this.active)
+        if(this.active && this.game.scene)
             this.game.scene.add(this.lineSegments)
 
-        this.game.ticker.events.on('tick', () =>
+        if(this.game.ticker?.events)
         {
-            this.update()
-        }, 4)
-
-        if(this.game.debug.active)
-        {
-            this.debugPanel = this.game.physics.debugPanel.addFolder({
-                title: 'Wireframe',
-                expanded: true,
-            })
-
-            this.debugPanel.addBinding(this, 'active', { label: 'debug' }).on('change', () =>
+            this.game.ticker.events.on('tick', () =>
             {
-                if(this.active)
-                    this.game.scene.add(this.lineSegments)
-                else
-                    this.game.scene.remove(this.lineSegments)
-            })
+                this.update()
+            }, 4)
         }
+
+        // Debug - Pane doesn't have addFolder method
     }
 
     update()

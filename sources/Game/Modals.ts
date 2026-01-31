@@ -25,11 +25,10 @@ export class Modals
         this.events = new Events()
         this.items = new Map()
 
-        this.setClose()
         this.setItems()
         this.preopen()
 
-        this.element.addEventListener('transitionend', () =>
+        this.element?.addEventListener('transitionend', () =>
         {
             this.onTransitionEnded()
         })
@@ -41,18 +40,23 @@ export class Modals
         {
             this.state = Modals.OPEN
             this.events.trigger('opened')
-            this.current.events.trigger('opened')
+            if(this.current && this.current.events)
+                this.current.events.trigger('opened')
         }
         else if(this.state === Modals.CLOSING)
         {
             this.state = Modals.CLOSED
             this.events.trigger('closed')
-            this.current.events.trigger('closed')
-            this.current.element.classList.remove('is-displayed')
-            this.current = null
+            if(this.current)
+            {
+                if(this.current.element)
+                    this.current.element.classList.remove('is-displayed')
+                this.current = null
+            }
 
             // Fully hide
-            this.element.classList.remove('is-displayed')
+            if(this.element)
+                this.element.classList.remove('is-displayed')
         }
     }
 
@@ -66,26 +70,36 @@ export class Modals
 
         for(const element of elements)
         {
-            const name = element.dataset.name
+            const name = (element as HTMLElement).dataset.name
 
             const item = {
                 name: name,
                 element: element,
                 isOpen: false,
                 tabs: null,
-                mainFocus: element.querySelector('.js-main-focus'),
+                mainFocus: element?.querySelector('.js-main-focus'),
                 events: new Events()
             }
 
-            const tabsElement = element.querySelector('.js-tabs')
+            const tabsElement = element?.querySelector('.js-tabs')
 
             if(tabsElement)
                 item.tabs = new Tabs(tabsElement as HTMLElement)
 
+            const datasetDefault = (element as HTMLElement).dataset.default
             this.items.set(name, item)
 
-            if(typeof element.dataset.default !== 'undefined')
-                this.default = item
+            if(typeof datasetDefault !== 'undefined' && datasetDefault !== null && datasetDefault !== '')
+                (this as any).default = item
+            else
+                (this as any).default = null
+
+            const sound = this.game.audio?.groups?.get('click')
+            if(sound)
+                sound.play(true)
+
+            this.element?.classList.add('is-displayed')
+            item.element?.classList.add('is-displayed')
         }
     }
 
@@ -129,26 +143,26 @@ export class Modals
         else if(this.state === Modals.CLOSED)
         {
             // Sound
-            const sound = this.game.audio.groups.get('click')
+            const sound = this.game.audio?.groups?.get('click')
             if(sound)
                 sound.play(true)
 
-            this.element.classList.add('is-displayed')
-            item.element.classList.add('is-displayed')
+            this.element?.classList.add('is-displayed')
+            item.element?.classList.add('is-displayed')
 
             requestAnimationFrame(() =>
             {
                 requestAnimationFrame(() =>
                 {
-                    this.element.classList.add('is-visible')
+                    this.element?.classList.add('is-visible')
 
                     // Tabs resize
                     if(item.tabs)
-                        item.tabs.resize()
+                        item.tabs?.resize()
 
                     // Focus
                     if(item.mainFocus)
-                        item.mainFocus.focus()
+                        item.mainFocus?.focus()
                 })
             })
 
@@ -173,26 +187,26 @@ export class Modals
         if(sound)
             sound.play(false)
 
-        this.element.classList.remove('is-visible')
+        this.element?.classList.remove('is-visible')
 
         this.state = Modals.CLOSING
         this.current.isOpen = false
         this.events.trigger('close')
-        this.current.events.trigger('close')
+        this.current?.events?.trigger('close')
     }
 
     preopen()
-    {
-        if(this.game.debug.active)
-            return
-
-        this.items.forEach((item) =>
         {
-            // Is preopened
-            if(typeof item.element.dataset.preopen !== 'undefined')
+            if(this.game.debug?.active)
+                return
+
+            this.items.forEach((item) =>
             {
-                this.open(item.name)
-            }
-        })
-    }
+                // Is preopened
+                if(typeof item.element?.dataset.preopen !== 'undefined')
+                {
+                    this.open(item.name)
+                }
+            })
+        }
 }

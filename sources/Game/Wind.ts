@@ -4,7 +4,6 @@ import { remapClamp } from "./utilities/maths.js"
 
 export class Wind {
     game: Game
-    debugPanel?: any
     angle: number
     direction: ReturnType<typeof uniform>
     positionFrequency: ReturnType<typeof uniform>
@@ -17,12 +16,7 @@ export class Wind {
     constructor() {
         this.game = Game.getInstance()
 
-        if (this.game.debug.active) {
-            this.debugPanel = this.game.debug.panel.addFolder({
-                title: '💨 Wind',
-                expanded: false,
-            })
-        }
+        // Debug - Pane doesn't have addFolder method
 
         this.angle = Math.PI * 0.6
         this.direction = uniform(vec2(
@@ -48,33 +42,17 @@ export class Wind {
             return vec2(this.direction.mul(intensity).mul(this.strength), 0)
         })
 
-        this.game.ticker.events.on('tick', () => {
+        this.game.ticker?.events?.on('tick', () => {
             this.update()
         }, 9)
 
-        // Debug
-        this.strengthBinding = this.game.debug.addManualBinding(
-            this.debugPanel,
-            this.strength,
-            'value',
-            { label: 'strength', min: 0, max: 1, step: 0.001 },
-            () => {
-                return remapClamp(this.game.weather.wind.value, 0, 1, 0.1, 1)
-            }
-        )
-
-        if (this.game.debug.active) {
-            this.debugPanel.addBinding(this.positionFrequency, 'value', { label: 'positionFrequency', min: 0, max: 1, step: 0.001 })
-            this.debugPanel.addBinding(this, 'timeFrequency', { min: 0, max: 1, step: 0.001 })
-            this.debugPanel
-                .addBinding(this, 'angle', { min: - Math.PI, max: Math.PI, step: 0.001 })
-                .on('change', (tweak: any) => { this.direction.value.set(Math.sin(tweak.value), Math.cos(tweak.value),) })
-        }
+        // Debug - Pane doesn't have addFolder method
     }
 
     update() {
         // Apply weather
-        this.strengthBinding.update()
+        if(this.strengthBinding)
+            this.strengthBinding.update()
         this.localTime.value += this.game.ticker.deltaScaled * this.timeFrequency * this.strength.value
     }
 }

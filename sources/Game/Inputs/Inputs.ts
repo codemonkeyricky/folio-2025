@@ -1,11 +1,11 @@
 import { Events } from '../Events.js'
 import { Game } from '../Game.js'
-import { Gamepad } from './Gamepad.js'
-import { Pointer } from './Pointer.js'
-import Keyboard from './Keyboard.ts'
-import { InteractiveButtons } from './InteractiveButtons.js'
-import { Wheel } from './Wheel.ts'
-import { Nipple } from './Nipple.js'
+import Gamepad from './Gamepad.js'
+import Pointer from './Pointer.js'
+import Keyboard from './Keyboard.js'
+import InteractiveButtons from './InteractiveButtons.js'
+import { Wheel } from './Wheel.js'
+import Nipple from './Nipple.js'
 import ObservableSet from '../utilities/ObservableSet.js'
 
 export class Inputs
@@ -68,12 +68,15 @@ export class Inputs
         this.addActions(actions)
 
         for(const filter of filters)
-            this.filters.add(filter)
+        this.filters.add(filter)
 
-        this.game.ticker.events.on('tick', () =>
+        if(this.game.ticker?.events)
         {
-            this.update()
-        }, 0)
+            this.game.ticker.events.on('tick', () =>
+            {
+                this.update()
+            }, 0)
+        }
 
         document.documentElement.classList.add(`is-mode-mouse-keyboard`)
     }

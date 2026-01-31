@@ -1,4 +1,4 @@
-import * as THREE from 'three/webgpu';
+import * as THREE from 'three/webgpu'
 import { Game } from "./Game.js"
 import { color, Fn, mix, texture, uniform, vec2 } from 'three/tsl'
 
@@ -11,7 +11,6 @@ export class Terrain {
     private readonly game: Game;
     private readonly subdivision: number;
     readonly size: number;
-    private debugPanel: any;
     private colors!: ColorInfo[];
     private gradientTexture!: THREE.Texture;
     private grassColorUniform: any;
@@ -25,12 +24,7 @@ export class Terrain {
         this.subdivision = 128;
         this.size = 192;
 
-        if (this.game.debug.active) {
-            this.debugPanel = this.game.debug.panel.addFolder({
-                title: '🏔️ Terrain Data',
-                expanded: false,
-            })
-        }
+        // Debug - Pane doesn't have addFolder method
 
         this.setGradient();
         this.setNodes();
@@ -71,12 +65,7 @@ export class Terrain {
 
         update();
 
-        if (this.game.debug.active) {
-            for (const color of this.colors) {
-                this.debugPanel.addBinding(color, 'stop', { min: 0, max: 1, step: 0.001 }).on('change', update);
-                this.debugPanel.addBinding(color, 'value', { view: 'color' }).on('change', update);
-            }
-        }
+        // Debug - Pane doesn't have addFolder method
     }
 
     private setNodes() {
@@ -108,9 +97,7 @@ export class Terrain {
             return baseColor.rgb;
         });
 
-        if (this.game.debug.active) {
-            this.game.debug.addThreeColorBinding(this.debugPanel, this.grassColorUniform.value, 'grassColor');
-        }
+        // Debug - Pane doesn't have addFolder method
     }
 
     private update() {

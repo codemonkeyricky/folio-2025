@@ -40,31 +40,15 @@ export class Fog
         {
             this.game.ticker.events.on('tick', () =>
             {
-                this.update()
+                // Apply day cycles values
+                const amplitude = (this.game.view?.optimalArea?.farDistance ?? 0) - (this.game.view?.optimalArea?.nearDistance ?? 0)
+                this.colorA.value.copy(this.game.dayCycles?.properties.fogColorA.value)
+                this.colorB.value.copy(this.game.dayCycles?.properties.fogColorB.value)
+                this.near.value = (this.game.view?.optimalArea?.nearDistance ?? 0) + this.game.dayCycles?.properties.fogNearRatio.value * amplitude
+                this.far.value = (this.game.view?.optimalArea?.nearDistance ?? 0) + this.game.dayCycles?.properties.fogFarRatio.value * amplitude
             }, 10)
         }
 
-        // Debug
-        if(this.game.debug?.active)
-        {
-            const debugPanel = this.game.debug.panel?.addFolder?.({
-                title: '☁️ Fog',
-                expanded: false,
-            })
-            if(debugPanel)
-            {
-                debugPanel.addBinding(this.radialCenter, 'value', { value: 'offset', min: 0, max: 1 })
-            }
-        }
-    }
-
-    update()
-    {
-        // Apply day cycles values
-        const amplitude = (this.game.view?.optimalArea?.farDistance ?? 0) - (this.game.view?.optimalArea?.nearDistance ?? 0)
-        this.colorA.value.copy(this.game.dayCycles?.properties.fogColorA.value)
-        this.colorB.value.copy(this.game.dayCycles?.properties.fogColorB.value)
-        this.near.value = (this.game.view?.optimalArea?.nearDistance ?? 0) + this.game.dayCycles?.properties.fogNearRatio.value * amplitude
-        this.far.value = (this.game.view?.optimalArea?.nearDistance ?? 0) + this.game.dayCycles?.properties.fogFarRatio.value * amplitude
+        // Debug - Pane doesn't have addFolder method
     }
 }
