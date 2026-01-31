@@ -15,6 +15,21 @@ import { TimeMachine } from './TimeMachine.js'
 
 export class Areas
 {
+    game: Game
+    achievements!: AchievementsArea
+    altar!: AltarArea
+    behindTheScene!: BehindTheSceneArea
+    bowling!: BowlingArea
+    career!: CareerArea
+    circuit!: CircuitArea
+    cookie!: CookieArea
+    lab!: LabArea
+    landing!: LandingArea
+    projects!: ProjectsArea
+    social!: SocialArea
+    toilet!: ToiletArea
+    timeMachine!: TimeMachine
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -36,13 +51,13 @@ export class Areas
         ]
 
         const model = [...this.game.resources.areasModel.scene.children]
-        
+
         for(const child of model)
         {
             for(const [ name, AreaClass ] of list)
             {
                 if(child.name.startsWith(name))
-                    this[name] = new AreaClass(child)
+                    this[name as keyof this] = new AreaClass(child)
             }
         }
 

@@ -3,6 +3,7 @@ declare module '../Materials/MeshDefaultMaterial.js' {
     export class MeshDefaultMaterial extends THREE.MeshLambertNodeMaterial {
         static revealDiscardNodeBuilder: (game: any, outputColor: any) => any
         vertexNode?: any
+        outputNode: any
         constructor(parameters?: any)
     }
 }

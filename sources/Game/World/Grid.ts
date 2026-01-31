@@ -1,13 +1,14 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
-import MeshGridMaterial, { MeshGridMaterialLine as MeshGridLine } from '../Materials/MeshGridMaterial.js'
+import MeshGridMaterial, { MeshGridMaterialLine } from '../Materials/MeshGridMaterial.js'
+import { MeshDefaultMaterial } from '../Materials/MeshDefaultMaterial.js'
 import { Fn } from 'three/tsl'
 
 export class Grid
 {
     game: Game
-    mesh: THREE.Mesh | null = null
-    debugPanel: any
+    debugPanel?: any
+    mesh!: THREE.Mesh
 
     constructor()
     {
@@ -26,11 +27,11 @@ export class Grid
 
     setVisual()
     {
-        const lines: MeshGridLine[] = [
-            // new MeshGridLine(0x705df2, 1, 0.03, 0.2),
-            // new MeshGridLine(0xffffff, 10, 0.003, 1),
-            new MeshGridLine('#8d55ff', 10, 0.02, 0.2),
-            new MeshGridLine('#675369', 100, 0.002, 1),
+        const lines = [
+            // new MeshGridMaterialLine(0x705df2, 1, 0.03, 0.2),
+            // new MeshGridMaterialLine(0xffffff, 10, 0.003, 1),
+            new MeshGridMaterialLine('#8d55ff', 10, 0.02, 0.2),
+            new MeshGridMaterialLine('#675369', 100, 0.002, 1),
         ]
 
         const uvGridMaterial = new MeshGridMaterial({
@@ -42,12 +43,19 @@ export class Grid
             lines
         })
 
+        const defaultMaterial = new MeshDefaultMaterial({
+            colorNode: uvGridMaterial.outputNode.rgb,
+            hasWater: false,
+            hasReveal: false,
+            hasLightBounce: false
+        })
+
         uvGridMaterial.outputNode = Fn(() =>
         {
             // const distanceToCenter = positionWorld.xz.sub(this.game.reveal.position2Uniform).length()
             // distanceToCenter.lessThan(this.game.reveal.distance).discard()
 
-            return uvGridMaterial.outputNode
+            return defaultMaterial.outputNode
         })()
 
         this.mesh = new THREE.Mesh(
@@ -74,10 +82,10 @@ export class Grid
                     title: 'Line',
                     expanded: false,
                 })
-                lineDebugPanel.addBinding(line.scale.value, 'value', { label: 'scale', min: 0, max: 1, step: 0.001 })
-                lineDebugPanel.addBinding(line.thickness.value, 'value', { label: 'thickness', min: 0, max: 1, step: 0.001 })
-                lineDebugPanel.addBinding(line.offset.value, 'value', { label: 'offset', min: 0, max: 1, step: 0.001 })
-                lineDebugPanel.addBinding(line.cross.value, 'value', { label: 'cross', min: 0, max: 1, step: 0.001 })
+                lineDebugPanel.addBinding(line.scale, 'value', { label: 'scale', min: 0, max: 1, step: 0.001 })
+                lineDebugPanel.addBinding(line.thickness, 'value', { label: 'thickness', min: 0, max: 1, step: 0.001 })
+                lineDebugPanel.addBinding(line.offset, 'value', { label: 'offset', min: 0, max: 1, step: 0.001 })
+                lineDebugPanel.addBinding(line.cross, 'value', { label: 'cross', min: 0, max: 1, step: 0.001 })
                 lineDebugPanel.addBinding({ color: '#' + line.color.value.getHexString(THREE.SRGBColorSpace) }, 'color').on('change', (tweak: any) => line.color.value.set(tweak.value))
             }
         }
@@ -90,8 +98,7 @@ export class Grid
 
     destroy()
     {
-        const material = this.mesh.material as THREE.Material
-        material.dispose()
+        (this.mesh.material as THREE.Material).dispose()
         this.mesh.geometry.dispose()
         this.mesh.removeFromParent()
     }
