@@ -1,4 +1,4 @@
 1. For the given .js file - rename it to .ts 
-2. Run "npm run build" and fix all errors - this includes fixing all other files that import this file.
-3. Make sure no runtime error - run "npm run dev" and ensure no error logs in console
+2. Run "npm run build" and fix all errors (includes fixing all other files that import this file)
+3. Make sure no runtime error (run "npm run dev" and ensure no error logs in console)
 4. Commit the changes
