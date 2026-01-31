@@ -11,7 +11,7 @@ export class Monitoring
         this.game = Game.getInstance()
 
         // No debug
-        if(!this.game.debug.active)
+        if(!this.game.debug?.active)
             return
 
         // Stats

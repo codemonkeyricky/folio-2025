@@ -41,7 +41,10 @@ export class PhysicsWireframe
         if(!this.active)
             return
 
-        const { vertices, colors } = this.game.physics.world.debugRender()
+        const debugRender = this.game.physics?.world?.debugRender()
+        if(!debugRender) return
+
+        const { vertices, colors } = debugRender
 
         ;(this.geometry.attributes.position as any).array = vertices
         this.geometry.attributes.position.needsUpdate = true

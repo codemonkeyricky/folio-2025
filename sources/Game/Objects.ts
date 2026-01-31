@@ -34,7 +34,7 @@ export class Objects {
         this.key = 0
         this.roundedViewPosition = { x: 0, z: 0 }
 
-        this.game.ticker.events.on('tick', () => {
+        this.game.ticker?.events.on('tick', () => {
             this.update()
         }, 4)
     }
@@ -95,7 +95,12 @@ export class Objects {
          * Physical
          */
         if (_physicalDescription) {
-            object.physical = this.game.physics.getPhysical(_physicalDescription)
+            const physical = this.game.physics?.getPhysical(_physicalDescription) as any
+            if(physical !== undefined) {
+                object.physical = physical
+            } else {
+                object.physical = null
+            }
         }
 
         /**
@@ -247,20 +252,26 @@ export class Objects {
         object.physical.body.resetTorques()
 
         // Wait a second and reactivate
-        this.game.ticker.wait(1, () => {
-            object.physical!.body.setEnabled(isEnabled)
+        const ticker = this.game.ticker
+        if(ticker) {
+            ticker.wait(1, () => {
+                if(object.physical) {
+                    const body = object.physical.body
+                    body.setEnabled(isEnabled)
 
-            // Sleep
-            if (object.physical!.initialState.sleeping)
-                object.physical!.body.sleep()
+                    // Sleep
+                    if (object.physical.initialState.sleeping)
+                        body.sleep()
 
-            object.reseting = false
-            this.game.ticker.wait(1, () => {
-                object.needsUpdate = true
+                    object.reseting = false
+                    ticker.wait(1, () => {
+                        object.needsUpdate = true
+                    })
+                }
             })
-        })
+        }
 
-        if (object.visual) {
+        if (object.visual && object.physical) {
             if (object.visual.parent)
                 object.visual.parent.add(object.visual.object3D)
             object.visual.object3D.position.copy(object.physical.initialState.position)
@@ -276,11 +287,11 @@ export class Objects {
 
     disable(object: ObjectData) {
         if (object.physical) {
-            object.physical!.body.setLinvel({ x: 0, y: 0, z: 0 }, false)
-            object.physical!.body.setAngvel({ x: 0, y: 0, z: 0 }, false)
-            object.physical!.body.resetForces()
-            object.physical!.body.resetTorques()
-            object.physical!.body.setEnabled(false)
+            object.physical.body.setLinvel({ x: 0, y: 0, z: 0 }, false)
+            object.physical.body.setAngvel({ x: 0, y: 0, z: 0 }, false)
+            object.physical.body.resetForces()
+            object.physical.body.resetTorques()
+            object.physical.body.setEnabled(false)
         }
 
         if (object.visual)
@@ -289,7 +300,7 @@ export class Objects {
 
     enable(object: ObjectData) {
         if (object.physical)
-            object.physical!.body.setEnabled(true)
+            object.physical.body.setEnabled(true)
 
         if (object.visual)
             object.visual.parent.add(object.visual.object3D)
@@ -329,18 +340,19 @@ export class Objects {
             }
 
 
-            if (_object.physical) {
+            if (_object.physical && position) {
+                const body = _object.physical.body
                 // Felt in the floor => reset
-                if (position.y < this.game.water.depthElevation) {
+                if (position && this.game.water && position.y < this.game.water.depthElevation) {
                     this.resetObject(_object)
                 }
 
                 // Far from view => Reset
-                if (objectsNeedDistanceTest) {
+                if (objectsNeedDistanceTest && position && this.game.view && this.game.view.optimalArea) {
                     const distanceToView = Math.hypot(this.roundedViewPosition.x - position.x, this.roundedViewPosition.z - position.z)
 
-                    if (_object.physical!.body.isEnabled() && !_object.physical!.body.isSleeping() && distanceToView > this.game.view.optimalArea.radius) {
-                        _object.physical!.body.sleep()
+                    if (body.isEnabled() && !body.isSleeping() && distanceToView > this.game.view.optimalArea.radius) {
+                        body.sleep()
                     }
                 }
             }

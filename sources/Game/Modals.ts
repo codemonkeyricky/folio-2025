@@ -76,7 +76,7 @@ export class Modals
                 name: name,
                 element: element,
                 isOpen: false,
-                tabs: null,
+                tabs: null as Tabs | null,
                 mainFocus: element?.querySelector('.js-main-focus'),
                 events: new Events()
             }
@@ -86,13 +86,20 @@ export class Modals
             if(tabsElement)
                 item.tabs = new Tabs(tabsElement as HTMLElement)
 
-            const datasetDefault = (element as HTMLElement).dataset.default
-            this.items.set(name, item)
+            const datasetDefault = (element as HTMLElement).dataset.default as unknown as string | undefined
+            if(name && typeof name === 'string') {
+                this.items.set(name, item)
+            }
 
-            if(typeof datasetDefault !== 'undefined' && datasetDefault !== null && datasetDefault !== '')
+            let hasDefault = false
+            if(datasetDefault != null && typeof datasetDefault === 'string' && datasetDefault !== '') {
+                hasDefault = true
+            }
+            if(hasDefault) {
                 (this as any).default = item
-            else
+            } else {
                 (this as any).default = null
+            }
 
             const sound = this.game.audio?.groups?.get('click')
             if(sound)
@@ -168,12 +175,16 @@ export class Modals
 
             this.state = Modals.OPENING
             this.current = item
-            this.game.inputs.filters.clear()
-            this.game.inputs.filters.add('modal')
+            if(this.game.inputs?.filters) {
+                this.game.inputs.filters.clear()
+                this.game.inputs.filters.add('modal')
+            }
 
-            item.isOpen = true
+            if(item) {
+                item.isOpen = true
+            }
             this.events.trigger('open')
-            item.events.trigger('open')
+            item.events?.trigger('open')
         }
     }
 
