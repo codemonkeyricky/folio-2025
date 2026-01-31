@@ -5,8 +5,8 @@ import { remapClamp } from './utilities/maths.js'
 
 export class Explosions
 {
-    game: Game
-    events: Events
+    game!: Game
+    events!: Events
 
     constructor()
     {
@@ -15,13 +15,7 @@ export class Explosions
         this.events = new Events()
     }
 
-    explode(
-        coordinates: THREE.Vector3,
-        radius: number = 7,
-        strength: number = 4,
-        vehicleOnly: boolean = false,
-        bulletTimeStrengthThreshold: number = 3
-    ): boolean
+    explode(coordinates: THREE.Vector3, radius = 7, strength = 4, vehicleOnly = false, bulletTimeStrengthThreshold = 3)
     {
         // View roll
         const distance = this.game.view.focusPoint.position.distanceTo(coordinates)
@@ -32,13 +26,13 @@ export class Explosions
         this.game.world.leaves?.explode(coordinates, radius)
 
         // Objects physics
-        const applyPhysicsExplosion = (physicalObject: any): boolean =>
+        const applyPhysicsExplosion = (physicalObject: any) =>
         {
             const position = new THREE.Vector3()
             position.copy(physicalObject.body.translation())
             const direction = position.clone().sub(coordinates)
             direction.y = 0
-            const distance = Math.hypot(direction.x, direction.z)
+            const distance = Math.hypot(direction.x, direction.z) as number
 
             const fadedStrength = remapClamp(distance, 1, radius, 1, 0)
             const impulse = direction.clone().setLength(0.5)
@@ -48,7 +42,7 @@ export class Explosions
             impulse.normalize()
 
             const finalStrength = fadedStrength * strength
-
+            
             impulse.setLength(finalStrength * physicalObject.body.mass())
 
             if(fadedStrength > 0)
