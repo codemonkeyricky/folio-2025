@@ -1,18 +1,29 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
 import gsap from 'gsap'
-import { alea } from 'seedrandom'
+import alea from 'seedrandom'
 
-const rng = new alea('easterFragments')
+const rng = alea('easterFragments')
 
 export class FragmentObject
 {
-    constructor(_position)
+    game!: Game
+    caught!: boolean
+    group1!: THREE.Group
+    group2!: THREE.Group
+    scale!: number
+    radiusMultiplier!: number
+    elapsedTime!: number
+    timeMultiplier!: number
+    main!: any
+    fragments!: THREE.Object3D[]
+
+    constructor(_position: THREE.Vector3)
     {
         this.game = Game.getInstance()
 
         this.caught = false
-        
+
         this.group1 = new THREE.Group()
         this.group1.position.copy(_position)
         this.game.scene.add(this.group1)
@@ -79,13 +90,13 @@ export class FragmentObject
             this.timeMultiplier += this.game.ticker.deltaScaled * 8
 
         this.elapsedTime += this.game.ticker.deltaScaled * this.timeMultiplier
-        this.group1.y = Math.sin(this.game.ticker.elapsedScaled * 0.5) * 0.3
+        this.group1.position.y = Math.sin(this.game.ticker.elapsedScaled * 0.5) * 0.3
 
         this.group1.scale.setScalar(this.scale)
-        
+
         this.main.rotation.x = Math.sin(this.elapsedTime) * 0.2
         this.main.rotation.z = Math.sin(this.elapsedTime) * 0.2
-        
+
         for(const _fragment of this.fragments)
         {
             _fragment.position.x = Math.sin((this.elapsedTime + _fragment.userData.timeOffset) * _fragment.userData.timeMultiplier) * _fragment.userData.radius * this.radiusMultiplier
