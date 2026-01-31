@@ -3,23 +3,21 @@ import { Game } from './Game.js'
 import gsap from 'gsap'
 import { clamp, remap } from './utilities/maths.js'
 
-interface BulletTime {
-    active: boolean
-    endTime: number | null
-    scale: number
-    progress: number
-    inSpeed: number
-    outSpeed: number
-    activate: (duration?: number) => void
-}
-
 export class Time
 {
-    game: Game
-    defaultScale: number
-    _scale: number
-    bulletTime: BulletTime
-    debugPanel: any
+    game!: Game
+    defaultScale!: number
+    _scale!: number
+    bulletTime!: {
+        active: boolean
+        endTime: number | null
+        scale: number
+        progress: number
+        inSpeed: number
+        outSpeed: number
+        activate: (duration?: number) => void
+    }
+    debugPanel!: any
 
     constructor()
     {
@@ -27,7 +25,6 @@ export class Time
 
         this.defaultScale = 2
         this._scale = this.defaultScale
-        this.bulletTime = {} as BulletTime
         this.game.ticker.scale = this.scale
         gsap.globalTimeline.timeScale(this.scale)
 
@@ -52,32 +49,34 @@ export class Time
 
     setBulletTime()
     {
-        this.bulletTime = {} as BulletTime
-        this.bulletTime.active = false
-        this.bulletTime.endTime = 0
-        this.bulletTime.scale = 0.5
-        this.bulletTime.progress = 0
-        this.bulletTime.inSpeed = 3
-        this.bulletTime.outSpeed = 0.3
-        this.bulletTime.activate = (duration: number = 1.5) =>
-        {
-            if(this.bulletTime.active)
+        this.bulletTime = {
+            active: false,
+            endTime: null,
+            scale: 0.5,
+            progress: 0,
+            inSpeed: 3,
+            outSpeed: 0.3,
+            activate: (duration = 1.5) =>
             {
-                const newEndTime = Date.now() + duration * 1000
-                this.bulletTime.endTime = Math.max(this.bulletTime.endTime ?? 0, newEndTime)
-            }
-            else
-            {
-                this.bulletTime.endTime = Date.now() + duration * 1000
-            }
+                if(this.bulletTime.active)
+                {
+                    const newEndTime = Date.now() + duration * 1000
+                    if(this.bulletTime.endTime)
+                        this.bulletTime.endTime = Math.max(this.bulletTime.endTime, newEndTime)
+                }
+                else
+                {
+                    this.bulletTime.endTime = Date.now() + duration * 1000
+                }
 
-            this.bulletTime.active = true
+                this.bulletTime.active = true
+            }
         }
     }
 
     update()
     {
-        if(Date.now() > (this.bulletTime.endTime ?? 0))
+        if(this.bulletTime.endTime && Date.now() > this.bulletTime.endTime)
             this.bulletTime.active = false
 
         const speed = this.bulletTime.active ? this.bulletTime.inSpeed : this.bulletTime.outSpeed
