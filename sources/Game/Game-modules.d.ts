@@ -93,8 +93,22 @@ declare module './Inputs/Inputs.js' {
     export default module
 }
 declare module './Inputs/InteractiveButtons.js' {
-    const module: any
-    export default module
+    class InteractiveButtons {
+        events: any
+        active: boolean
+        element: HTMLElement | null
+        overlay: HTMLElement | null
+        list: Set<string>
+        items: Map<string, { name: string, visible: boolean, element: HTMLElement }>
+        activate(): void
+        deactivate(): void
+        addItems(list: string[]): void
+        removeItems(list: string[]): void
+        clearItems(): void
+        updateItems(): void
+    }
+    export { InteractiveButtons }
+    export default InteractiveButtons
 }
 declare module './Inputs/Pointer.js' {
     const module: any
@@ -238,8 +252,13 @@ declare module './TextCanvas.js' {
 }
 
 declare module './TextCanvas.ts' {
-    const module: any
-    export default module
+    class TextCanvas {
+        constructor(fontFamily?: string, fontWeight?: string, fontSize?: number, width?: number | null, height?: number | null, density?: number, horizontalAlign?: string, lineHeight?: number)
+        updateText(text: string | string[]): void
+        getMeasure(): any
+        texture: any
+    }
+    export default TextCanvas
 }
 declare module './Ticker.js' {
     const module: any
@@ -356,6 +375,11 @@ declare module './Pointer.js' {
 }
 
 declare module './InteractiveButtons.js' {
+    export const InteractiveButtons: any
+    export default InteractiveButtons
+}
+
+declare module './InteractiveButtons.ts' {
     export const InteractiveButtons: any
     export default InteractiveButtons
 }
