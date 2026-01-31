@@ -8,44 +8,44 @@ import { ResourcesLoader } from './ResourcesLoader.js'
 import { Ticker } from './Ticker.js'
 import { Time } from './Time.js'
 import { Player } from './Player.js'
-import { View } from './View.js'
+import View from './View.js'
 import { Viewport } from './Viewport.js'
 import { World } from './World/World.js'
-import { Tracks } from './Tracks.js'
-import { Lighting } from './Lighting.js'
-import { Materials } from './Materials.js'
+import Tracks from './Tracks.js'
+import Lighting from './Lighting.js'
+import Materials from './Materials.js'
 import { Objects } from './Objects.js'
 import { Fog } from './Fog.js'
 import { DayCycles } from './Cycles/DayCycles.js'
-import { Weather } from './Weather.js'
-import { Noises } from './Noises.js'
+import Weather from './Weather.js'
+import Noises from './Noises.js'
 import { Wind } from './Wind.js'
 import { Terrain } from './Terrain.js'
 import { Explosions } from './Explosions.js'
 import { YearCycles } from './Cycles/YearCycles.js'
-import { Server } from './Server.js'
+import Server from './Server.js'
 import { Modals } from './Modals.js'
 import { PhysicsVehicle } from './Physics/PhysicsVehicle.js'
 import { PhysicsWireframe } from './Physics/PhysicsWireframe.js'
 import { Zones } from './Zones.js'
-import { Overlay } from './Overlay.js'
-import { Tornado } from './Tornado.js'
-import { InteractivePoints } from './InteractivePoints.js'
+import Overlay from './Overlay.js'
+import Tornado from './Tornado.js'
+import InteractivePoints from './InteractivePoints.js'
 import { Respawns } from './Respawns.js'
-import { Audio } from './Audio.js'
+import Audio from './Audio.js'
 import { ClosingManager } from './ClosingManager.js'
-import { RayCursor } from './RayCursor.js'
+import RayCursor from './RayCursor.js'
 import { Water } from './Water.js'
 import { Reveal } from './Reveal.js'
 import { KonamiCode } from './KonamiCode.js'
-import { Achievements } from './Achievements.js'
-import { Notifications } from './Notifications.js'
+import Achievements from './Achievements.js'
+import Notifications from './Notifications.js'
 import { Quality } from './Quality.js'
 import { Menu } from './Menu.js'
 import { Title } from './Title.js'
 import { PreRenderer } from './PreRenderer.js'
-import { Options } from './Options.js'
-import { Map } from './Map.js'
+import Options from './Options.js'
+import Map from './Map.js'
 
 export class Game
 {
@@ -62,32 +62,32 @@ export class Game
     debug: Debug | undefined
     resourcesLoader: ResourcesLoader | undefined
     quality: Quality | undefined
-    server: Server | undefined
+    server: typeof Server | undefined
     ticker: Ticker | undefined
     time: Time | undefined
     dayCycles: DayCycles | undefined
     yearCycles: YearCycles | undefined
     inputs: Inputs | undefined
-    audio: Audio | undefined
-    notifications: Notifications | undefined
-    rayCursor: RayCursor | undefined
+    audio: typeof Audio | undefined
+    notifications: typeof Notifications | undefined
+    rayCursor: typeof RayCursor | undefined
     viewport: Viewport | undefined
     modals: Modals | undefined
     menu: Menu | undefined
     rendering: Rendering | undefined
     resources: any
-    options: Options | undefined
+    options: typeof Options | undefined
     respawns: Respawns | undefined
-    view: View | undefined
+    view: typeof View | undefined
     reveal: Reveal | undefined
-    noises: Noises | undefined
-    weather: Weather | undefined
+    noises: typeof Noises | undefined
+    weather: typeof Weather | undefined
     wind: Wind | undefined
-    tracks: Tracks | undefined
-    lighting: Lighting | undefined
+    tracks: typeof Tracks | undefined
+    lighting: typeof Lighting | undefined
     fog: Fog | undefined
     water: Water | undefined
-    materials: Materials | undefined
+    materials: typeof Materials | undefined
     objects: Objects | undefined
     explosions: Explosions | undefined
     world: World | undefined
@@ -99,12 +99,12 @@ export class Game
     zones: Zones | undefined
     player: Player | undefined
     closingManager: ClosingManager | undefined
-    interactivePoints: InteractivePoints | undefined
-    overlay: Overlay | undefined
+    interactivePoints: typeof InteractivePoints | undefined
+    overlay: typeof Overlay | undefined
     konamiCode: KonamiCode | undefined
-    achievements: Achievements | undefined
-    tornado: Tornado | undefined
-    map: Map | undefined
+    achievements: typeof Achievements | undefined
+    tornado: typeof Tornado | undefined
+    map: Map<any, any> | undefined
     title: Title | undefined
 
     constructor()
@@ -120,12 +120,12 @@ export class Game
         if (!domElement) {
             throw new Error('Game DOM element not found')
         }
-        this.domElement = domElement
+        this.domElement = domElement as HTMLElement
         const canvasElement = domElement.querySelector('.js-canvas')
         if (!canvasElement) {
             throw new Error('Game canvas element not found')
         }
-        this.canvasElement = canvasElement
+        this.canvasElement = canvasElement as HTMLElement
         document.documentElement.classList.add('is-started')
 
         this.scene = new THREE.Scene()
@@ -141,7 +141,7 @@ export class Game
         this.audio = new Audio()
         this.notifications = new Notifications()
         this.rayCursor = new RayCursor()
-        this.viewport = new Viewport(this.domElement)
+        this.viewport = new Viewport(this.domElement as HTMLElement)
         this.modals = new Modals()
         this.menu = new Menu()
         this.rendering = new Rendering()
@@ -153,7 +153,7 @@ export class Game
             [ 'paletteTexture',             'palette.ktx',                                'textureKtx', (resource: any) => { resource.colorSpace = THREE.SRGBColorSpace; resource.minFilter = THREE.NearestFilter; resource.magFilter = THREE.NearestFilter; resource.generateMipmaps = false; } ],
         ])
         this.options = new Options()
-        this.respawns = new Respawns(import.meta.env.VITE_PLAYER_SPAWN || 'landing')
+        this.respawns = new Respawns(import.meta.env.VITE_PLAYER_SPAWN || 'landing' as string)
         this.view = new View()
         this.rendering.setPostprocessing()
         this.rendering.start()
@@ -216,7 +216,9 @@ export class Game
             ],
             (toLoad: number, total: number) =>
             {
-                this.world.intro.updateProgress(1 - toLoad / total)
+                if (this.world && this.world.intro && (this.world.intro as any).updateProgress) {
+                    (this.world.intro as any).updateProgress(1 - toLoad / total)
+                }
             }
         )
 
@@ -225,9 +227,9 @@ export class Game
         this.resources = { ...newResources, ...this.resources }
 
         this.terrain = new Terrain()
-        this.physics = new Physics()
+        this.physics = new Physics(this)
         this.wireframe = new PhysicsWireframe()
-        this.physicalVehicle = new PhysicsVehicle()
+        this.physicalVehicle = new PhysicsVehicle(this)
         this.zones = new Zones()
         this.player = new Player()
         this.closingManager = new ClosingManager()
@@ -240,7 +242,7 @@ export class Game
         this.title = new Title()
         this.world.step(1)
 
-        if(this.quality.level === 0 && this.rendering.renderer?.backend?.isWebGPUBackend)
+        if(this.quality.level === 0 && (this.rendering.renderer as any).backend?.isWebGPUBackend)
             PreRenderer.render()
 
         this.reveal.updateStep(0)
