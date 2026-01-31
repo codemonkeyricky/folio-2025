@@ -54,23 +54,73 @@ export class KonamiCode
 
     async activate()
     {
-        const files = [
+        const files: [string, string] = [
             'vehicle/oldSchool.glb',
             'vehicle/default.glb'
         ]
         
-        const resources = await this.game.resourcesLoader.load([
-            [ 'vehicle', `${files[this.activationCount % 2]}?cb=${this.activationCount}`, 'gltf' ],
-        ])
-            
-        this.game.world.visualVehicle.destroy()
-        this.game.world.visualVehicle = new VisualVehicle(resources.vehicle.scene)
-
-        if(this.game.world.confetti)
+        const game = this.game
+        if(!game)
         {
-            this.game.world.confetti.pop(this.game.player.position.clone())
-            this.game.world.confetti.pop(this.game.player.position.clone().add(new THREE.Vector3(1, -1, 1.5)))
-            this.game.world.confetti.pop(this.game.player.position.clone().add(new THREE.Vector3(1, -1, -1.5)))
+            return
+        }
+
+        const resourcesLoader = game.resourcesLoader
+        if(!resourcesLoader)
+        {
+            return
+        }
+
+        const resourcesResult: any = await resourcesLoader.load([
+            [ 'vehicle', files[this.activationCount % 2], 'gltf' ],
+        ])
+
+        if(!resourcesResult)
+        {
+            return
+        }
+
+        const vehicleEntry: any = resourcesResult.vehicle
+        if(!vehicleEntry)
+        {
+            return
+        }
+
+        const resources = vehicleEntry
+            
+        const vehicleResources = resources.vehicle
+        const world = this.game.world
+        const visualVehicle = world?.visualVehicle
+        const confetti = world?.confetti
+
+        if(vehicleResources && vehicleResources.scene && visualVehicle)
+        {
+            visualVehicle.destroy()
+            world.visualVehicle = new VisualVehicle(vehicleResources.scene)
+        }
+
+        if(confetti)
+        {
+            const player = this.game.player
+            if(player)
+            {
+                const playerPos = player.position
+                const confettiFunc: any = confetti.pop
+                if(confettiFunc)
+                {
+                    const availableConfetti = confettiFunc()
+                    if(availableConfetti)
+                    {
+                        const availableConfettiPop: any = availableConfetti.pop
+                        if(availableConfettiPop)
+                        {
+                            availableConfettiPop(playerPos.clone())
+                            availableConfettiPop(playerPos.clone().add(new THREE.Vector3(1, -1, 1.5)))
+                            availableConfettiPop(playerPos.clone().add(new THREE.Vector3(1, -1, -1.5)))
+                        }
+                    }
+                }
+            }
         }
 
         this.activationCount++

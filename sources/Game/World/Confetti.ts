@@ -2,6 +2,5 @@ export class Confetti {
     constructor(game: any)
     init(): void
     destroy(): void
-    pop(position?: any, radius?: number, elevation?: number): any
+    pop(position?: THREE.Vector3, radius?: number, elevation?: number): any
 }
-

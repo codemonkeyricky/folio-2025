@@ -1,12 +1,12 @@
 import * as THREE from 'three/webgpu'
 import { pass, renderOutput } from 'three/tsl'
 import { bloom } from "three/addons/tsl/display/BloomNode.js"
-import { Game } from "./Game.js"
 import { Inspector } from "three/addons/inspector/Inspector.js"
-import { cheapDOF } from "./Passes/cheapDOF.ts"
+import { cheapDOF } from "./Passes/cheapDOF.js"
+import { Game } from './Game.js'
 
 export class Rendering {
-    game: Game
+    game!: Game
     debugPanel: any
     renderer!: THREE.WebGPURenderer
     postProcessing!: THREE.PostProcessing
@@ -15,9 +15,12 @@ export class Rendering {
     stats: any
 
     constructor() {
-        this.game = Game.getInstance()
+        const game = Game.getInstance()
+        if(!game) return
 
-        if (this.game.debug.active) {
+        this.game = game
+
+        if (this.game.debug?.active) {
             this.debugPanel = this.game.debug.panel.addFolder({
                 title: '📸 Rendering',
                 expanded: false,
@@ -150,7 +153,7 @@ export class Rendering {
         if (this.stats)
             this.stats.update()
 
-        if (this.game.monitoring?.stats) {
+        if (this.game.monitoring?.stats && this.game.rendering?.renderer) {
             this.game.rendering.renderer.resolveTimestampsAsync(THREE.TimestampQuery.RENDER)
             this.game.monitoring.stats.update()
         }
