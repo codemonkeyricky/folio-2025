@@ -26,9 +26,10 @@ export class FragmentObject
 
         this.group1 = new THREE.Group()
         this.group1.position.copy(_position)
-        this.game.scene.add(this.group1)
+        if(this.game.scene)
+            this.game.scene.add(this.group1)
 
-        this.group2 = this.game.resources.fragment.scene.clone(true)
+        this.group2 = this.game.resources?.fragment?.scene?.clone(true)
         this.group1.add(this.group2)
 
         this.scale = 1
@@ -55,12 +56,13 @@ export class FragmentObject
             }
         }
 
-        this.game.materials.updateObject(this.group1)
+        this.game.materials?.updateObject(this.group1)
 
-        this.game.ticker.events.on('tick', () =>
-        {
-            this.update()
-        }, 10)
+        if(this.game.ticker?.events)
+            this.game.ticker.events.on('tick', () =>
+            {
+                this.update()
+            }, 10)
     }
 
     catch()
@@ -86,11 +88,13 @@ export class FragmentObject
 
     update()
     {
-        if(this.caught)
+        if(this.caught && this.game.ticker)
             this.timeMultiplier += this.game.ticker.deltaScaled * 8
 
-        this.elapsedTime += this.game.ticker.deltaScaled * this.timeMultiplier
-        this.group1.position.y = Math.sin(this.game.ticker.elapsedScaled * 0.5) * 0.3
+        const deltaScaled = this.game.ticker?.deltaScaled || 0
+        const elapsedScaled = this.game.ticker?.elapsedScaled || 0
+        this.elapsedTime += deltaScaled * this.timeMultiplier
+        this.group1.position.y = Math.sin(elapsedScaled * 0.5) * 0.3
 
         this.group1.scale.setScalar(this.scale)
 
