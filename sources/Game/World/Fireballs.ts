@@ -1,10 +1,17 @@
 import * as THREE from 'three/webgpu'
 import { Game } from '../Game.js'
-import { Fn, mix, positionGeometry, texture, vec3, vec4, normalGeometry, dot, max, min, mul, add, color, luminance, step, uniform, positionWorld } from 'three/tsl'
+import { color, Fn, mix, normalGeometry, positionGeometry, step, texture, uniform, positionWorld, vec3, vec4 } from 'three/tsl'
 import gsap from 'gsap'
 
 export class Fireballs
 {
+    game!: Game
+    geometry!: THREE.SphereGeometry
+    emissiveColorA!: typeof color
+    emissiveColorB!: typeof color
+    emissiveStrength!: typeof uniform
+    debugPanel?: any
+
     constructor()
     {
         this.game = Game.getInstance()
@@ -30,7 +37,7 @@ export class Fireballs
 
     }
 
-    create(coordinates, fireRadius = 5, explosionRadius = 5)
+    create(coordinates: THREE.Vector3, fireRadius = 5, explosionRadius = 5)
     {
         // Material
         const material = new THREE.MeshBasicNodeMaterial({ wireframe: false })
@@ -50,14 +57,14 @@ export class Fireballs
             const blending = normalGeometry.abs().normalize()
             blending.assign(blending.div(blending.x.add(blending.y).add(blending.z)))
 
-            const noise = add(
+            const noise = mix(
                 noiseX.mul(blending.x),
                 noiseY.mul(blending.y),
                 noiseZ.mul(blending.z),
             ).remap(0.15, 0.9, 0, 1).toVar()
-            
+
             noise.mulAssign(positionWorld.y.mul(2).clamp(0, 1)) // Apply floor attenuation
-            
+
             noise.subAssign(progress) // Apply progress
 
             // Emissive

@@ -63,7 +63,7 @@ export class World {
             this.leaves = new Leaves(this.game)
             this.rain = new RainLines(this.game)
             this.lightnings = new Lightnings(this.game)
-            this.fireballs = new Fireballs(this.game)
+            this.fireballs = new Fireballs()
             this.snow = new Snow(this.game)
             this.visualTornado = new VisualTornado(this.game)
             this.bushes = new Bushes()
