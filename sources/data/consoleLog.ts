@@ -1,5 +1,3 @@
-import * as THREE from 'three/webgpu'
-
 const text = `
 ██████╗ ██████╗ ██╗   ██╗███╗   ██╗ ██████╗ ██╗███████╗                   
 ██╔══██╗██╔══██╗██║   ██║████╗  ██║██╔═══██╗╚═╝██╔════╝                   
@@ -38,7 +36,7 @@ const text = `
 ╚═══════════════════════╝
 
 ╔═ Three.js ════════════╗
-║ Three.js is the library I’m using to render this 3D world (release: ${THREE.REVISION})
+║ Three.js is the library I'm using to render this 3D world
 ║ https://threejs.org/
 ║ It was created by mr.doob (https://x.com/mrdoob, https://github.com/mrdoob),
 ║ followed by hundreds of awesome developers,
@@ -97,7 +95,7 @@ for(let i = 0; i < text.length; i++)
         currentStyle = style
         finalText += '%c'
 
-        finalStyles.push(stylesSet[currentStyle])
+        finalStyles.push(stylesSet[currentStyle as 'letter' | 'pipe'])
     }
     finalText += char
 }
