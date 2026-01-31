@@ -396,6 +396,10 @@ declare module './World/Grid.js' {
     const module: any
     export default module
 }
+declare module './World/Grid.ts' {
+    const module: any
+    export default module
+}
 declare module './World/Intro.js' {
     const module: any
     export default module

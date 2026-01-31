@@ -74,7 +74,7 @@ class MeshGridMaterialLine
     cross: any
     offset: any
 
-    constructor(_color = 0xffffff, scale = 1, thickness = 0.05, cross = 1, offset = vec2(0))
+    constructor(_color: any = 0xffffff, scale = 1, thickness = 0.05, cross = 1, offset = vec2(0))
     {
         this.color = uniform(color(_color))
         this.scale = uniform(scale)
@@ -95,6 +95,7 @@ class MeshGridMaterial extends NodeMaterial
     antialiased: boolean
     color: any
     lines: MeshGridMaterialLine[]
+    outputNode: any
 
     constructor(parameters?: any)
     {
