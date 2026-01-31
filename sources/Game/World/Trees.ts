@@ -34,8 +34,8 @@ export class Trees {
         this.game = Game.getInstance()
 
         // Debug
-        if (this.game.debug?.active) {
-            this.debugPanel = this.game.debug.panel?.addFolder({
+        if (this.game.debug?.active && this.game.debug.panel) {
+            this.debugPanel = (this.game.debug.panel as any).addFolder({
                 title: `🌳 ${name}`,
                 expanded: false,
             })

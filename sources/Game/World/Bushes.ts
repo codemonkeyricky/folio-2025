@@ -19,9 +19,9 @@ export class Bushes
         this.foliage = new Foliage(this.game.resources.bushesReferences.scene.children, this.colorANode, this.colorBNode)
 
         // Debug
-        if(this.game.debug?.active)
+        if(this.game.debug?.active && this.game.debug.panel)
         {
-            const debugPanel = this.game.debug.panel?.addFolder({
+            const debugPanel = (this.game.debug.panel as any).addFolder({
                 title: '🌳 Bushes',
                 expanded: false,
             })

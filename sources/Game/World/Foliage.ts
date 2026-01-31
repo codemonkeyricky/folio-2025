@@ -43,10 +43,13 @@ export class Foliage
         this.setFromReferences()
         this.setInstancedMesh()
 
-        this.game.ticker.events.on('tick', () =>
+        if(this.game.ticker)
         {
-            this.update()
-        }, 10)
+            this.game.ticker.events.on('tick', () =>
+            {
+                this.update()
+            }, 10)
+        }
     }
 
     setGeometry()
@@ -122,7 +125,7 @@ export class Foliage
         {
             const rotatedUv = rotateUV(
                 uv(),
-                this.game.wind.offsetNode(positionLocal.xz).length().mul(2.2)
+                (this.game.wind?.offsetNode(positionLocal.xz) || new THREE.Vector3()).length().mul(2.2)
             )
 
             return texture(this.game.resources.foliageTexture, rotatedUv).r
@@ -221,10 +224,13 @@ export class Foliage
         this.mesh.castShadow = true
         this.mesh.count = this.transformMatrices.length
         this.mesh.frustumCulled = false
-        this.game.scene.add(this.mesh)
+        this.game.scene?.add(this.mesh)
 
-        this.instanceMatrix = new THREE.InstancedBufferAttribute(new Float32Array(this.mesh.count * 16), 16)
-        this.instanceMatrix.setUsage(THREE.StaticDrawUsage)
+        if(this.mesh)
+        {
+            this.instanceMatrix = new THREE.InstancedBufferAttribute(new Float32Array(this.mesh.count * 16), 16)
+            this.instanceMatrix.setUsage(THREE.StaticDrawUsage)
+        }
 
         let i = 0
         for(const matrix of this.transformMatrices)
@@ -236,9 +242,9 @@ export class Foliage
 
     update()
     {
-        this.material.seeThroughPosition.value.copy(this.game.world.visualVehicle.screenPosition)
+        this.material.seeThroughPosition.value.copy(this.game.world?.visualVehicle?.screenPosition)
 
-        this.material.seeThroughEdgeMin.value = 3 / this.game.view.spherical.radius.current * this.seeThroughMultiplier
-        this.material.seeThroughEdgeMax.value = 15 / this.game.view.spherical.radius.current * this.seeThroughMultiplier
+        this.material.seeThroughEdgeMin.value = 3 / (this.game.view?.spherical?.radius?.current || 1) * this.seeThroughMultiplier
+        this.material.seeThroughEdgeMax.value = 15 / (this.game.view?.spherical?.radius?.current || 1) * this.seeThroughMultiplier
     }
 }

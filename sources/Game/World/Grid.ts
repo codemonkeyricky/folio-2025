@@ -14,9 +14,9 @@ export class Grid
     {
         this.game = Game.getInstance()
 
-        if(this.game.debug.active)
+        if(this.game.debug?.active && this.game.debug.panel)
         {
-            this.debugPanel = this.game.debug.panel.addFolder({
+            this.debugPanel = (this.game.debug.panel as any).addFolder({
                 title: '🌐 Grid',
                 expanded: false,
             })
@@ -65,14 +65,17 @@ export class Grid
         this.mesh.position.y = 0
         this.mesh.rotation.x = - Math.PI * 0.5
 
-        const defaultRespawn = this.game.respawns.getDefault()
-        this.mesh.position.x = defaultRespawn.position.x
-        this.mesh.position.z = defaultRespawn.position.z
+        const defaultRespawn = this.game.respawns?.getDefault()
+        if(defaultRespawn)
+        {
+            this.mesh.position.x = defaultRespawn.position.x
+            this.mesh.position.z = defaultRespawn.position.z
+        }
 
-        this.game.scene.add(this.mesh)
+        this.game.scene?.add(this.mesh)
 
         // Debug
-        if(this.game.debug.active)
+        if(this.game.debug?.active && this.debugPanel)
         {
             this.debugPanel.addBinding(uvGridMaterial, 'scale', { min: 0, max: 0.002, step: 0.0001 })
 
@@ -93,7 +96,7 @@ export class Grid
 
     show()
     {
-        this.game.scene.add(this.mesh)
+        this.game.scene?.add(this.mesh)
     }
 
     destroy()

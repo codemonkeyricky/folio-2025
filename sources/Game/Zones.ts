@@ -32,9 +32,9 @@ export class Zones
         this.previewGroup.userData.preventPreRender = true
         this.game.scene?.add(this.previewGroup)
 
-        if(this.game.debug?.active)
+        if(this.game.debug?.active && this.game.debug.panel)
         {
-            this.debugPanel = this.game.debug.panel?.addFolder({
+            this.debugPanel = (this.game.debug.panel as any).addFolder({
                 title: '🌐 Zones',
                 expanded: false,
             })

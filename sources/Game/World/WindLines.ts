@@ -57,7 +57,10 @@ class WindLine {
         this.mesh = new THREE.Mesh(geometry, material as any)
         this.mesh.renderOrder = 1
         this.mesh.position.y = 2
-        this.game.scene.add(this.mesh)
+        if(this.game.scene)
+        {
+            this.game.scene.add(this.mesh)
+        }
     }
 }
 
@@ -74,8 +77,8 @@ export class WindLines {
     constructor() {
         this.game = Game.getInstance()
 
-        if (this.game.debug.active) {
-            this.debugPanel = this.game.debug.panel.addFolder({
+        if (this.game.debug?.active && this.game.debug.panel) {
+            this.debugPanel = (this.game.debug.panel as any).addFolder({
                 title: '⌇ Wind lines',
                 expanded: false,
             })
@@ -102,17 +105,20 @@ export class WindLines {
         }
 
         // Debug
-        this.durationBinding = this.game.debug.addManualBinding(
-            this.debugPanel,
-            this,
-            'duration',
-            { min: 0, max: 8, step: 0.001 },
-            () => {
-                return remapClamp(this.game.weather.wind.value, 0, 1, 8, 2)
-            }
-        )
+        if(this.game.debug && this.game.debug.addManualBinding)
+        {
+            this.durationBinding = this.game.debug.addManualBinding(
+                this.debugPanel,
+                this,
+                'duration',
+                { min: 0, max: 8, step: 0.001 },
+                () => {
+                    return remapClamp(this.game.weather.wind.value, 0, 1, 8, 2)
+                }
+            )
+        }
 
-        if (this.game.debug.active) {
+        if (this.game.debug?.active && this.debugPanel) {
             this.debugPanel.addBinding(this, 'intervalRange', {
                 min: 0,
                 max: 4000,
@@ -158,10 +164,13 @@ export class WindLines {
         windLine.available = false
 
         // Position and rotation
-        const angle = this.game.wind.angle
+        const angle = this.game.wind?.angle || 0
 
-        windLine.mesh.position.x = this.game.view.focusPoint.position.x + (Math.random() - 0.5) * this.game.view.optimalArea.radius
-        windLine.mesh.position.z = this.game.view.focusPoint.position.z + (Math.random() - 0.5) * this.game.view.optimalArea.radius
+        if(this.game.view && this.game.view.focusPoint && this.game.view.optimalArea)
+        {
+            windLine.mesh.position.x = this.game.view.focusPoint.position.x + (Math.random() - 0.5) * this.game.view.optimalArea.radius
+            windLine.mesh.position.z = this.game.view.focusPoint.position.z + (Math.random() - 0.5) * this.game.view.optimalArea.radius
+        }
 
         windLine.mesh.rotation.y = angle
 

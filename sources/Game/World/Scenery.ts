@@ -89,9 +89,9 @@ export class Scenery
         this.road.body = mesh.userData.object.physical.body
 
         // Debug
-        if(this.game.debug.active)
+        if(this.game.debug?.active && this.game.debug.panel)
         {
-            const debugPanel = this.game.debug.panel.addFolder({
+            const debugPanel = (this.game.debug.panel as any).addFolder({
                 title: '🛣️ Road',
                 expanded: false
             })
