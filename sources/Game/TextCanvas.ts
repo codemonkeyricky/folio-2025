@@ -1,23 +1,50 @@
 import * as THREE from 'three/webgpu'
 
+interface MeasureResult {
+    width: number
+}
+
+interface TextCanvasOptions {
+    fontFamily?: string
+    fontWeight?: string
+    fontSize?: number
+    width?: number | null
+    height?: number | null
+    density?: number
+    horizontalAlign?: 'center' | 'left' | 'right'
+    lineHeight?: number
+}
+
 let top = 0
-export class TextCanvas
-{
-    constructor(
-        fontFamily = 'Comic Sans',
-        fontWeight = '400',
-        fontSize = 10,
-        width = null,
-        height = null,
-        density = 1,
-        horizontalAlign = 'center',
-        lineHeight = 1
-    )
+
+export class TextCanvas {
+    private lines: string[]
+    private font: string
+    private width: number
+    private height: number
+    private horizontalAlign: 'center' | 'left' | 'right'
+    private lineHeight: number
+    private canvas!: HTMLCanvasElement
+    private context!: CanvasRenderingContext2D
+    public texture!: THREE.Texture
+
+    constructor(options: TextCanvasOptions = {})
     {
+        const {
+            fontFamily = 'Comic Sans',
+            fontWeight = '400',
+            fontSize = 10,
+            width = null,
+            height = null,
+            density = 1,
+            horizontalAlign = 'center',
+            lineHeight = 1
+        } = options
+
         this.lines = []
         this.font = `${fontWeight} ${fontSize * density}px "${fontFamily}"`
-        this.width = Math.ceil(width * density)
-        this.height = Math.ceil(height * density)
+        this.width = Math.ceil((width ?? 0) * density)
+        this.height = Math.ceil((height ?? 0) * density)
         this.horizontalAlign = horizontalAlign
         this.lineHeight = lineHeight * density
 
@@ -25,23 +52,23 @@ export class TextCanvas
         this.setTexture()
     }
 
-    setCanvas()
+    private setCanvas()
     {
         this.canvas = document.createElement('canvas')
         this.canvas.width = this.width
         this.canvas.height = this.height
         this.canvas.style.position = 'fixed'
-        this.canvas.style.zIndex = 999
+        this.canvas.style.zIndex = '999'
         this.canvas.style.top = `${top}px`
-        this.canvas.style.left = 0
+        this.canvas.style.left = '0'
         top += this.height + 10
         // document.body.append(this.canvas)
 
-        this.context = this.canvas.getContext('2d')
+        this.context = this.canvas.getContext('2d')!
         this.context.font = this.font
     }
 
-    setTexture()
+    private setTexture()
     {
         this.texture = new THREE.Texture(this.canvas)
         this.texture.colorSpace = THREE.SRGBColorSpace
@@ -51,23 +78,24 @@ export class TextCanvas
         this.texture.generateMipmaps = false
     }
 
-    updateText(text)
+    public updateText(text: string | string[]): void
     {
         this.lines = []
 
         if(typeof text === 'string')
             this.lines.push(text)
-        else if(text instanceof Array)
+        else if(Array.isArray(text))
             this.lines = text
 
         this.draw()
     }
 
-    getMeasure()
+    public getMeasure(): MeasureResult
     {
-        const output = {}
-        output.width = 0
-        
+        const output: MeasureResult = {
+            width: 0
+        }
+
         for(const line of this.lines)
         {
             const measure = this.context.measureText(line)
@@ -79,7 +107,7 @@ export class TextCanvas
         return output
     }
 
-    draw()
+    private draw(): void
     {
         // Clear
         this.context.fillStyle = '#000000'
@@ -95,7 +123,7 @@ export class TextCanvas
             // const y = this.height / (this.lines.length + 1) * (i + 1)
             const y = this.height / 2 + (i - (this.lines.length - 1) / 2) * this.lineHeight
 
-            let x = null
+            let x: number | null = null
             if(this.horizontalAlign === 'center')
                 x = this.width / 2
             else if(this.horizontalAlign === 'left')
@@ -103,7 +131,8 @@ export class TextCanvas
             else if(this.horizontalAlign === 'right')
                 x = this.width
 
-            this.context.fillText(line, x, y)
+            if(x !== null)
+                this.context.fillText(line, x, y)
 
             i++
         }

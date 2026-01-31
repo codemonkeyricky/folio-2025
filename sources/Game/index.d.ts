@@ -339,6 +339,16 @@ declare module './TextCanvas.js' {
     export default TextCanvas
 }
 
+declare module './TextCanvas.ts' {
+    class TextCanvas {
+        constructor(options?: any)
+        updateText(text: string | string[]): void
+        getMeasure(): any
+        texture: any
+    }
+    export default TextCanvas
+}
+
 declare module './Tornado.js' {
     const Tornado: any
     export default Tornado

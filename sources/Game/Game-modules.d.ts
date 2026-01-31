@@ -236,6 +236,11 @@ declare module './TextCanvas.js' {
     const module: any
     export default module
 }
+
+declare module './TextCanvas.ts' {
+    const module: any
+    export default module
+}
 declare module './Ticker.js' {
     const module: any
     export default module
