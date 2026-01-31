@@ -27,7 +27,7 @@ export class Scenery
             if(typeof child.userData.prevent === 'undefined' || child.userData.prevent === false)
             {
                 // Objects
-                this.game.objects.addFromModel(
+                this.game.objects!.addFromModel(
                     child,
                     {
 

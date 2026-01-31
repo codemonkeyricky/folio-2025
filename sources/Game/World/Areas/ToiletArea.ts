@@ -31,9 +31,10 @@ export class ToiletArea extends Area
     setCandleFlames()
     {
         const mesh = this.references.items.get('moon')[0]
-        mesh.visible = this.game.dayCycles.intervalEvents.get('night').inInterval
+        const nightInterval = this.game.dayCycles?.intervalEvents?.get('night')
+        mesh.visible = nightInterval?.inInterval
 
-        this.game.dayCycles.events.on('night', (inInterval: boolean) =>
+        this.game.dayCycles?.events.on('night', (inInterval: boolean) =>
         {
             mesh.visible = inInterval
         })

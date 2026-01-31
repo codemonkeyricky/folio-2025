@@ -34,8 +34,8 @@ export class Trees {
         this.game = Game.getInstance()
 
         // Debug
-        if (this.game.debug.active) {
-            this.debugPanel = this.game.debug.panel.addFolder({
+        if (this.game.debug?.active) {
+            this.debugPanel = this.game.debug.panel?.addFolder({
                 title: `🌳 ${name}`,
                 expanded: false,
             })
@@ -48,8 +48,6 @@ export class Trees {
 
         this.setModelParts()
         this.setBodies()
-        this.setLeaves()
-        this.setPhysical()
     }
 
     setModelParts() {
@@ -70,7 +68,7 @@ export class Trees {
 
     setBodies() {
         if (this.modelParts.body) {
-            this.game.materials.updateObject(this.modelParts.body)
+            this.game.materials!.updateObject(this.modelParts.body)
             this.bodies = new THREE.InstancedMesh(this.modelParts.body.geometry, this.modelParts.body.material, this.references.length)
             this.bodies.instanceMatrix.setUsage(THREE.StaticDrawUsage)
             this.bodies.castShadow = true
@@ -82,7 +80,7 @@ export class Trees {
                 i++
             }
 
-            this.game.scene.add(this.bodies)
+            this.game.scene?.add(this.bodies)
         }
     }
 
@@ -104,19 +102,19 @@ export class Trees {
         this.leaves = new Foliage(references, leavesColorANode, leavesColorBNode, true)
 
         // Debug
-        if (this.game.debug.active) {
-            this.game.debug.addThreeColorBinding(this.debugPanel, leavesColorANode.value, 'leavesColorA')
-            this.game.debug.addThreeColorBinding(this.debugPanel, leavesColorBNode.value, 'leavesColorB')
-            this.debugPanel.addBinding(this.leaves.material.shadowOffset, 'value', { label: 'shadowOffset', min: 0, max: 2, step: 0.001 })
-            this.debugPanel.addBinding(this.leaves.material.threshold, 'value', { label: 'threshold', min: 0, max: 1, step: 0.001 })
-            this.debugPanel.addBinding(this.leaves.material.seeThroughEdgeMin, 'value', { label: 'seeThroughEdgeMin', min: 0, max: 1, step: 0.001 })
-            this.debugPanel.addBinding(this.leaves.material.seeThroughEdgeMax, 'value', { label: 'seeThroughEdgeMax', min: 0, max: 1, step: 0.001 })
+        if (this.game.debug?.active) {
+            this.game.debug?.addThreeColorBinding(this.debugPanel, leavesColorANode.value, 'leavesColorA')
+            this.game.debug?.addThreeColorBinding(this.debugPanel, leavesColorBNode.value, 'leavesColorB')
+            this.debugPanel?.addBinding(this.leaves.material.shadowOffset, 'value', { label: 'shadowOffset', min: 0, max: 2, step: 0.001 })
+            this.debugPanel?.addBinding(this.leaves.material.threshold, 'value', { label: 'threshold', min: 0, max: 1, step: 0.001 })
+            this.debugPanel?.addBinding(this.leaves.material.seeThroughEdgeMin, 'value', { label: 'seeThroughEdgeMin', min: 0, max: 1, step: 0.001 })
+            this.debugPanel?.addBinding(this.leaves.material.seeThroughEdgeMax, 'value', { label: 'seeThroughEdgeMax', min: 0, max: 1, step: 0.001 })
         }
     }
 
     setPhysical() {
         for (const treeReference of this.references) {
-            this.game.objects.add(
+            this.game.objects!.add(
                 null,
                 {
                     type: 'fixed',
@@ -126,7 +124,7 @@ export class Trees {
                     sleeping: true,
                     colliders: [{ shape: 'cylinder', parameters: [2.5, 0.15], category: 'object' }],
                     onCollision: (_force: any, _position: any) => {
-                        this.game.audio.groups.get('hitDefault').playRandomNext(_force, _position)
+                        this.game.audio!.groups.get('hitDefault').playRandomNext(_force, _position)
                     }
                 }
             )

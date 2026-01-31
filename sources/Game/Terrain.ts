@@ -29,7 +29,7 @@ export class Terrain {
         this.setGradient();
         this.setNodes();
 
-        this.game.ticker.events.on('tick', () => {
+        this.game.ticker?.events.on('tick', () => {
             this.update();
         }, 10);
     }

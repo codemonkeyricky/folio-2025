@@ -1,6 +1,6 @@
 import { Game } from '../Game.js'
 import * as THREE from 'three/webgpu'
-import { InstancedGroup } from '../InstancedGroup.ts'
+import { InstancedGroup } from '../InstancedGroup.js'
 
 export class Fences
 {
@@ -19,10 +19,10 @@ export class Fences
         base.frustumCulled = true
 
         // Descriptions > To extract colliders
-        const descriptions = this.game.objects.getFromModel(base, {}, {})
+        const descriptions = this.game.objects!.getFromModel(base, {}, {})
 
         // Update materials
-        this.game.materials.updateObject(base)
+        this.game.materials!.updateObject(base)
 
         // Setup base
         for(const child of base.children)
@@ -32,7 +32,7 @@ export class Fences
         this.objects = []
         for(const reference of references)
         {
-            this.objects.push(this.game.objects.add(
+            this.objects.push(this.game.objects!.add(
                 {
                     model: reference,
                     updateMaterials: false,
@@ -56,11 +56,12 @@ export class Fences
             ))
         }
 
+
         // Instanced group
         this.instancedGroup = new InstancedGroup(references, base)
 
         // Tick update
-        this.game.ticker.events.on('tick', () =>
+        this.game.ticker!.events.on('tick', () =>
         {
             for(const object of this.objects)
             {

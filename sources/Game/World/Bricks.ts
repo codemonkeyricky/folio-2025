@@ -1,5 +1,5 @@
 import { Game } from '../Game.js'
-import { InstancedGroup } from '../InstancedGroup.ts'
+import { InstancedGroup } from '../InstancedGroup.js'
 
 export class Bricks
 {
@@ -26,7 +26,7 @@ export class Bricks
         for(const reference of references)
         {
             this.objects.push(
-                this.game.objects.add(
+                this.game.objects!.add(
                     {
                         model: reference,
                         updateMaterials: false,
@@ -46,7 +46,7 @@ export class Bricks
                         contactThreshold: 15,
                         onCollision: (force: any, position: any) =>
                         {
-                            this.game.audio.groups.get('hitBrick').playRandomNext(force, position)
+                            this.game.audio!.groups.get('hitBrick').playRandomNext(force, position)
                         }
                     },
                 )
@@ -57,7 +57,7 @@ export class Bricks
         this.instancedGroup = new InstancedGroup(references, base)
 
         // Tick update
-        this.game.ticker.events.on('tick', () =>
+        this.game.ticker!.events.on('tick', () =>
         {
             for(const object of this.objects)
             {

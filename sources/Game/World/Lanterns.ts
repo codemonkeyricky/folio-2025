@@ -1,6 +1,6 @@
 import { Game } from '../Game.js'
 import * as THREE from 'three/webgpu'
-import { InstancedGroup } from '../InstancedGroup.ts'
+import { InstancedGroup } from '../InstancedGroup.js'
 
 export class Lanterns
 {
@@ -25,14 +25,14 @@ export class Lanterns
         }
 
         // Update materials
-        this.game.materials.updateObject(base)
+        this.game.materials!.updateObject(base)
 
         // Objects
         this.objects = []
         for(const reference of references)
         {
             this.objects.push(
-                this.game.objects.add(
+                this.game.objects!.add(
                     {
                         model: reference,
                         updateMaterials: false,
@@ -47,23 +47,23 @@ export class Lanterns
                         friction: 0.7,
                         mass: 0.1,
                         sleeping: true,
-                        colliders: [ { shape: 'cuboid', parameters: [ 0.7 * 0.5, 1 * 0.5, 0.7 * 0.5 ], category: 'object' } ],
                         waterGravityMultiplier: - 1,
                         contactThreshold: 10,
-                        onCollision: (force: number, position: THREE.Vector3) =>
+                        onCollision: (_force: number, _position: THREE.Vector3) =>
                         {
-                            this.game.audio.groups.get('hitMetal').playRandomNext(force, position)
+                            // this.game.audio.groups.get('hitMetal').playRandomNext(force, position)
                         }
                     },
                 )
             )
         }
 
+
         // Instanced group
         this.instancedGroup = new InstancedGroup(references, base)
 
         // Tick update
-        this.game.ticker.events.on('tick', () =>
+        this.game.ticker!.events.on('tick', () =>
         {
             for(const object of this.objects)
             {

@@ -62,7 +62,7 @@ export class Area
         {
             if(typeof child.userData.preventAutoAdd === 'undefined' || child.userData.preventAutoAdd === false)
             {
-                const object = this.game.objects.addFromModel(
+                const object = this.game.objects!.addFromModel(
                     child,
                     {
 
@@ -83,7 +83,7 @@ export class Area
                     typeof child.userData.preventFrustum === 'undefined' || child.userData.preventFrustum === false
                 )
                 {
-                    if(object.visual.object3D)
+                    if(object.visual?.object3D)
                         this.objects.hideable.push(object.visual.object3D)
                 }
 
@@ -104,7 +104,7 @@ export class Area
 
         const position = zoneReference.position.clone()
         const radius = zoneReference.scale.x
-        const zone = this.game.zones.create('cylinder', position, radius)
+        const zone = this.game.zones!.create('cylinder', position, radius)
 
         zone.events.on(
             'enter',

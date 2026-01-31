@@ -1,6 +1,5 @@
 import { vec2, Fn, texture, uniform } from 'three/tsl'
 import { Game } from "./Game.js"
-import { remapClamp } from "./utilities/maths.js"
 
 export class Wind {
     game: Game
@@ -53,6 +52,6 @@ export class Wind {
         // Apply weather
         if(this.strengthBinding)
             this.strengthBinding.update()
-        this.localTime.value += this.game.ticker.deltaScaled * this.timeFrequency * this.strength.value
+        this.localTime.value += this.game.ticker!.deltaScaled * this.timeFrequency * this.strength.value
     }
 }

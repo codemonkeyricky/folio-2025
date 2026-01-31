@@ -35,14 +35,14 @@ export class Title
     {
         if(this.game.physicalVehicle)
         {
-            this.offset += this.game.physicalVehicle.forwardSpeed * this.game.ticker.deltaScaled
+            this.offset += (this.game.physicalVehicle as any).forwardSpeed * this.game.ticker!.deltaScaled
             const offsetRounded = Math.floor(this.offset)
 
-            const delta = this.game.ticker.elapsed - this.lastTime
+            const delta = this.game.ticker!.elapsed - this.lastTime
 
             if(delta > this.interval && offsetRounded !== this.offsetRounded)
             {
-                this.lastTime = this.game.ticker.elapsed
+                this.lastTime = this.game.ticker!.elapsed
                 this.offsetRounded = offsetRounded
 
                 const line = []

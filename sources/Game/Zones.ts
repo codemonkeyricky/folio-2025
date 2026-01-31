@@ -22,7 +22,7 @@ export class Zones
 
         this.items = []
 
-        this.game.ticker.events.on('tick', () =>
+        this.game.ticker!.events.on('tick', () =>
         {
             this.update()
         }, 8)
@@ -30,15 +30,15 @@ export class Zones
         this.previewGroup = new THREE.Group()
         this.previewGroup.visible = false
         this.previewGroup.userData.preventPreRender = true
-        this.game.scene.add(this.previewGroup)
+        this.game.scene?.add(this.previewGroup)
 
-        if(this.game.debug.active)
+        if(this.game.debug?.active)
         {
-            this.debugPanel = this.game.debug.panel.addFolder({
+            this.debugPanel = this.game.debug.panel?.addFolder({
                 title: '🌐 Zones',
                 expanded: false,
             })
-            this.debugPanel.addBinding(this.previewGroup, 'visible', { label: 'previewVisible' })
+            this.debugPanel?.addBinding(this.previewGroup, 'visible', { label: 'previewVisible' })
         }
     }
 
@@ -63,7 +63,7 @@ export class Zones
     {
         for(const zone of this.items)
         {
-            let playerPosition = this.game.player.position
+            let playerPosition = this.game.player!.position
             let zonePosition = zone.position
 
             if(zone.type === 'cylinder')

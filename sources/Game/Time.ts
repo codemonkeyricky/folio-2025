@@ -24,7 +24,7 @@ export class Time
 
         this.defaultScale = 2
         this._scale = this.defaultScale
-        this.game.ticker.scale = this.scale
+        this.game.ticker!.scale = this.scale
         gsap.globalTimeline.timeScale(this.scale)
 
         this.setBulletTime()
@@ -70,7 +70,7 @@ export class Time
             this.bulletTime.active = false
 
         const speed = this.bulletTime.active ? this.bulletTime.inSpeed : this.bulletTime.outSpeed
-        this.bulletTime.progress += (this.bulletTime.active ? 1 : - 1) * this.game.ticker.delta * speed
+        this.bulletTime.progress += (this.bulletTime.active ? 1 : - 1) * (this.game.ticker?.delta || 0) * speed
         this.bulletTime.progress = clamp(this.bulletTime.progress, 0, 1)
 
         this.scale = remap(this.bulletTime.progress, 0, 1, this.defaultScale, this.bulletTime.scale)
@@ -80,7 +80,7 @@ export class Time
     set scale(value)
     {
         this._scale = value
-        this.game.ticker.scale = this.scale
+        this.game.ticker!.scale = this.scale
         gsap.globalTimeline.timeScale(value)
     }
 
