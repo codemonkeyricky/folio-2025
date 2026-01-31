@@ -4,48 +4,48 @@ import { Debug } from './Debug.js'
 import { Inputs } from './Inputs/Inputs.js'
 import { Physics } from './Physics/Physics.js'
 import { Rendering } from './Rendering.js'
-import { ResourcesLoader } from './ResourcesLoader'
+import { ResourcesLoader } from './ResourcesLoader.js'
 import { Ticker } from './Ticker.js'
 import { Time } from './Time.js'
-import { Player } from './Player'
-import { View } from './View'
-import { Viewport } from './Viewport.ts'
+import { Player } from './Player.js'
+import { View } from './View.js'
+import { Viewport } from './Viewport.js'
 import { World } from './World/World.js'
-import { Tracks } from './Tracks'
-import { Lighting } from './Lighting'
-import { Materials } from './Materials'
-import { Objects } from './Objects.ts'
-import { Fog } from './Fog.ts'
+import { Tracks } from './Tracks.js'
+import { Lighting } from './Lighting.js'
+import { Materials } from './Materials.js'
+import { Objects } from './Objects.js'
+import { Fog } from './Fog.js'
 import { DayCycles } from './Cycles/DayCycles.js'
-import { Weather } from './Weather'
-import { Noises } from './Noises'
-import { Wind } from './Wind.ts'
-import { Terrain } from './Terrain.ts'
+import { Weather } from './Weather.js'
+import { Noises } from './Noises.js'
+import { Wind } from './Wind.js'
+import { Terrain } from './Terrain.js'
 import { Explosions } from './Explosions.js'
-import { YearCycles } from './Cycles/YearCycles.ts'
-import { Server } from './Server'
+import { YearCycles } from './Cycles/YearCycles.js'
+import { Server } from './Server.js'
 import { Modals } from './Modals.js'
 import { PhysicsVehicle } from './Physics/PhysicsVehicle.js'
-import { PhysicsWireframe } from './Physics/PhysicsWireframe.ts'
+import { PhysicsWireframe } from './Physics/PhysicsWireframe.js'
 import { Zones } from './Zones.js'
-import { Overlay } from './Overlay'
-import { Tornado } from './Tornado'
-import { InteractivePoints } from './InteractivePoints'
-import { Respawns } from './Respawns.ts'
-import { Audio } from './Audio'
+import { Overlay } from './Overlay.js'
+import { Tornado } from './Tornado.js'
+import { InteractivePoints } from './InteractivePoints.js'
+import { Respawns } from './Respawns.js'
+import { Audio } from './Audio.js'
 import { ClosingManager } from './ClosingManager.js'
-import { RayCursor } from './RayCursor'
-import { Water } from './Water.ts'
+import { RayCursor } from './RayCursor.js'
+import { Water } from './Water.js'
 import { Reveal } from './Reveal.js'
 import { KonamiCode } from './KonamiCode.js'
-import { Achievements } from './Achievements'
-import { Notifications } from './Notifications'
+import { Achievements } from './Achievements.js'
+import { Notifications } from './Notifications.js'
 import { Quality } from './Quality.js'
 import { Menu } from './Menu.js'
 import { Title } from './Title.js'
-import { PreRenderer } from './PreRenderer.ts'
-import { Options } from './Options'
-import { Map } from './Map'
+import { PreRenderer } from './PreRenderer.js'
+import { Options } from './Options.js'
+import { Map } from './Map.js'
 
 export class Game
 {
@@ -56,68 +56,76 @@ export class Game
 
     private static instance: Game
 
-    domElement: HTMLElement | null
-    canvasElement: HTMLElement | null
-    scene: THREE.Scene
-    debug: Debug
-    resourcesLoader: ResourcesLoader
-    quality: Quality
-    server: Server
-    ticker: Ticker
-    time: Time
-    dayCycles: DayCycles
-    yearCycles: YearCycles
-    inputs: Inputs
-    audio: Audio
-    notifications: Notifications
-    rayCursor: RayCursor
-    viewport: Viewport
-    modals: Modals
-    menu: Menu
-    rendering: Rendering
+    domElement: HTMLElement | null = null
+    canvasElement: HTMLElement | null = null
+    scene: THREE.Scene | undefined
+    debug: Debug | undefined
+    resourcesLoader: ResourcesLoader | undefined
+    quality: Quality | undefined
+    server: Server | undefined
+    ticker: Ticker | undefined
+    time: Time | undefined
+    dayCycles: DayCycles | undefined
+    yearCycles: YearCycles | undefined
+    inputs: Inputs | undefined
+    audio: Audio | undefined
+    notifications: Notifications | undefined
+    rayCursor: RayCursor | undefined
+    viewport: Viewport | undefined
+    modals: Modals | undefined
+    menu: Menu | undefined
+    rendering: Rendering | undefined
     resources: any
-    options: Options
-    respawns: Respawns
-    view: View
-    reveal: Reveal
-    noises: Noises
-    weather: Weather
-    wind: Wind
-    tracks: Tracks
-    lighting: Lighting
-    fog: Fog
-    water: Water
-    materials: Materials
-    objects: Objects
-    explosions: Explosions
-    world: World
+    options: Options | undefined
+    respawns: Respawns | undefined
+    view: View | undefined
+    reveal: Reveal | undefined
+    noises: Noises | undefined
+    weather: Weather | undefined
+    wind: Wind | undefined
+    tracks: Tracks | undefined
+    lighting: Lighting | undefined
+    fog: Fog | undefined
+    water: Water | undefined
+    materials: Materials | undefined
+    objects: Objects | undefined
+    explosions: Explosions | undefined
+    world: World | undefined
     RAPIER: any
-    terrain: Terrain
-    physics: Physics
-    wireframe: PhysicsWireframe
-    physicalVehicle: PhysicsVehicle
-    zones: Zones
-    player: Player
-    closingManager: ClosingManager
-    interactivePoints: InteractivePoints
-    overlay: Overlay
-    konamiCode: KonamiCode
-    achievements: Achievements
-    tornado: Tornado
-    map: Map
-    title: Title
+    terrain: Terrain | undefined
+    physics: Physics | undefined
+    wireframe: PhysicsWireframe | undefined
+    physicalVehicle: PhysicsVehicle | undefined
+    zones: Zones | undefined
+    player: Player | undefined
+    closingManager: ClosingManager | undefined
+    interactivePoints: InteractivePoints | undefined
+    overlay: Overlay | undefined
+    konamiCode: KonamiCode | undefined
+    achievements: Achievements | undefined
+    tornado: Tornado | undefined
+    map: Map | undefined
+    title: Title | undefined
 
     constructor()
     {
-        this.instance = this
+        Game.instance = this
 
         this.init()
     }
 
     async init()
     {
-        this.domElement = document.querySelector('.game')
-        this.canvasElement = this.domElement?.querySelector('.js-canvas')
+        const domElement = document.querySelector('.game')
+        if (!domElement) {
+            throw new Error('Game DOM element not found')
+        }
+        this.domElement = domElement
+        const canvasElement = domElement.querySelector('.js-canvas')
+        if (!canvasElement) {
+            throw new Error('Game canvas element not found')
+        }
+        this.canvasElement = canvasElement
         document.documentElement.classList.add('is-started')
 
         this.scene = new THREE.Scene()
@@ -232,7 +240,7 @@ export class Game
         this.title = new Title()
         this.world.step(1)
 
-        if(this.quality.level === 0 && this.rendering.renderer.backend.isWebGPUBackend)
+        if(this.quality.level === 0 && this.rendering.renderer?.backend?.isWebGPUBackend)
             PreRenderer.render()
 
         this.reveal.updateStep(0)

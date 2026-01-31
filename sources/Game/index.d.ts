@@ -94,8 +94,239 @@ declare module './RayCursor.js' {
 }
 
 declare module './ResourcesLoader.js' {
-    const ResourcesLoader: any
-    export default ResourcesLoader
+    class ResourcesLoader {
+        constructor()
+        load(files: any[], progressCallback?: any)
+    }
+    export { ResourcesLoader }
+}
+
+declare module './Player.js' {
+    class Player {
+        static STATE_DEFAULT = 1
+        static STATE_LOCKED = 2
+        constructor()
+    }
+    export { Player }
+}
+
+declare module './View.js' {
+    class View {
+        constructor()
+    }
+    export { View }
+}
+
+declare module './Tracks.js' {
+    class Tracks {
+        constructor()
+    }
+    export { Tracks }
+}
+
+declare module './Materials.js' {
+    class Materials {
+        constructor()
+    }
+    export { Materials }
+}
+
+declare module './Weather.js' {
+    class Weather {
+        constructor()
+    }
+    export { Weather }
+}
+
+declare module './Noises.js' {
+    class Noises {
+        constructor()
+    }
+    export { Noises }
+}
+
+declare module './Server.js' {
+    class Server {
+        constructor()
+    }
+    export { Server }
+}
+
+declare module './Overlay.js' {
+    class Overlay {
+        constructor()
+    }
+    export { Overlay }
+}
+
+declare module './Tornado.js' {
+    class Tornado {
+        constructor()
+    }
+    export { Tornado }
+}
+
+declare module './InteractivePoints.js' {
+    class InteractivePoints {
+        constructor()
+    }
+    export { InteractivePoints }
+}
+
+declare module './Audio.js' {
+    class Audio {
+        constructor()
+    }
+    export { Audio }
+}
+
+declare module './RayCursor.js' {
+    class RayCursor {
+        constructor()
+    }
+    export { RayCursor }
+}
+
+declare module './Achievements.js' {
+    class Achievements {
+        constructor()
+    }
+    export { Achievements }
+}
+
+declare module './Notifications.js' {
+    class Notifications {
+        constructor()
+    }
+    export { Notifications }
+}
+
+declare module './Options.js' {
+    class Options {
+        constructor()
+    }
+    export { Options }
+}
+
+declare module './Map.js' {
+    class Map {
+        constructor()
+    }
+    export { Map }
+}
+
+declare module './Player.js' {
+    class Player {
+        static STATE_DEFAULT = 1
+        static STATE_LOCKED = 2
+        constructor()
+    }
+    export { Player }
+}
+
+declare module './View.js' {
+    class View {
+        constructor()
+    }
+    export { View }
+}
+
+declare module './Tracks.js' {
+    class Tracks {
+        constructor()
+    }
+    export { Tracks }
+}
+
+declare module './Materials.js' {
+    class Materials {
+        constructor()
+    }
+    export { Materials }
+}
+
+declare module './Weather.js' {
+    class Weather {
+        constructor()
+    }
+    export { Weather }
+}
+
+declare module './Noises.js' {
+    class Noises {
+        constructor()
+    }
+    export { Noises }
+}
+
+declare module './Server.js' {
+    class Server {
+        constructor()
+    }
+    export { Server }
+}
+
+declare module './Overlay.js' {
+    class Overlay {
+        constructor()
+    }
+    export { Overlay }
+}
+
+declare module './Tornado.js' {
+    class Tornado {
+        constructor()
+    }
+    export { Tornado }
+}
+
+declare module './InteractivePoints.js' {
+    class InteractivePoints {
+        constructor()
+    }
+    export { InteractivePoints }
+}
+
+declare module './Audio.js' {
+    class Audio {
+        constructor()
+    }
+    export { Audio }
+}
+
+declare module './RayCursor.js' {
+    class RayCursor {
+        constructor()
+    }
+    export { RayCursor }
+}
+
+declare module './Achievements.js' {
+    class Achievements {
+        constructor()
+    }
+    export { Achievements }
+}
+
+declare module './Notifications.js' {
+    class Notifications {
+        constructor()
+    }
+    export { Notifications }
+}
+
+declare module './Options.js' {
+    class Options {
+        constructor()
+    }
+    export { Options }
+}
+
+declare module './Map.js' {
+    class Map {
+        constructor()
+    }
+    export { Map }
 }
 
 declare module './Server.js' {

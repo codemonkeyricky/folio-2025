@@ -1,19 +1,19 @@
 declare module './Gamepad.js' {
-    const Gamepad: any
-    export default Gamepad
+    import type { Gamepad } from './Gamepad.js'
+    export { Gamepad }
 }
 
 declare module './Pointer.js' {
-    const Pointer: any
-    export default Pointer
+    import type { Pointer } from './Pointer.js'
+    export { Pointer }
 }
 
 declare module './InteractiveButtons.js' {
-    const InteractiveButtons: any
-    export default InteractiveButtons
+    import type { InteractiveButtons } from './InteractiveButtons.js'
+    export { InteractiveButtons }
 }
 
 declare module './Nipple.js' {
-    const Nipple: any
-    export default Nipple
+    import type { Nipple } from './Nipple.js'
+    export { Nipple }
 }

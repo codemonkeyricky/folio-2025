@@ -82,17 +82,17 @@ export class Inputs
     {
         this.keyboard = new Keyboard()
 
-        this.keyboard.events.on('down', (key: string, code: string) =>
+        this.keyboard.events.on('down', (_key: string, code: string) =>
         {
             this.updateMode(Inputs.MODE_MOUSEKEYBOARD)
-            this.start(`Keyboard.${key}`)
+            this.start(`Keyboard.${_key}`)
             this.start(`Keyboard.${code}`)
         })
 
-        this.keyboard.events.on('up', (key: string, code: string) =>
+        this.keyboard.events.on('up', (_key: string, code: string) =>
         {
             this.updateMode(Inputs.MODE_MOUSEKEYBOARD)
-            this.end(`Keyboard.${key}`)
+            this.end(`Keyboard.${_key}`)
             this.end(`Keyboard.${code}`)
         })
     }
@@ -113,7 +113,7 @@ export class Inputs
             this.end(`Gamepad.${key.name}`)
         })
 
-        this.gamepad.events.on('typeChange', (key: any) =>
+        this.gamepad.events.on('typeChange', (_key: any) =>
         {
             this.updateMode(Inputs.MODE_GAMEPAD)
         })
@@ -132,7 +132,10 @@ export class Inputs
 
     setPointer()
     {
-        this.pointer = new Pointer(this.game.canvasElement)
+        if(this.game.canvasElement)
+        {
+            this.pointer = new Pointer(this.game.canvasElement)
+        }
 
         this.pointer.events.on('down', () =>
         {
@@ -284,316 +287,6 @@ export class Inputs
         {
             if(action && this.checkCategory(action))
             {
-                action.value = value
-
-                if(action.active)
-                {
-                    this.events.trigger('actionChange', [ action ])
-                    this.events.trigger(action.name, [ action ])
-                }
-                else
-                {
-                    action.active = true
-
-                    this.events.trigger('actionStart', [ action ])
-                    this.events.trigger(action.name, [ action ])
-                }
-            }
-        }
-    }
-
-    update()
-    {
-        for(const action of this.actions.values())
-        {
-            if(action.trigger === 'end')
-            {
-                action.trigger = null
-            }
-        }
-    }
-
-    updateMode(mode: number)
-    {
-        this.mode = mode
-
-        if(mode === Inputs.MODE_MOUSEKEYBOARD)
-        {
-            document.documentElement.classList.add('is-mode-mouse-keyboard')
-            document.documentElement.classList.remove('is-mode-gamepad', 'is-mode-touch')
-        }
-        else if(mode === Inputs.MODE_GAMEPAD)
-        {
-            document.documentElement.classList.add('is-mode-gamepad')
-            document.documentElement.classList.remove('is-mode-mouse-keyboard', 'is-mode-touch')
-        }
-        else if(mode === Inputs.MODE_TOUCH)
-        {
-            document.documentElement.classList.add('is-mode-touch')
-            document.documentElement.classList.remove('is-mode-mouse-keyboard', 'is-mode-gamepad')
-        }
-    }
-
-    setInteractiveButtons()
-    {
-        this.interactiveButtons = new InteractiveButtons()
-    }
-
-    setNipple()
-    {
-        this.nipple = new Nipple()
-        this.addActions([
-            { name: 'nipplePointer', categories: [ 'wandering', 'racing' ], keys: [ 'Pointer.any' ] },
-        ])
-
-        this.events.on('nipplePointer', (action: any) =>
-        {
-            if(this.mode !== Inputs.MODE_TOUCH)
-                return
-
-            this.nipple.updateFromPointer(this.pointer, action)
-        })
-    }
-
-    addActions(actions: any[])
-    {
-        for(const action of actions)
-        {
-            const formatedAction = {...action}
-            formatedAction.active = false
-            formatedAction.value = 0
-            formatedAction.trigger = null
-            formatedAction.activeKeys = new Set()
-
-            this.actions.set(action.name, formatedAction)
-        }
-    }
-
-    checkCategory(action: any)
-    {
-        // No filter => Allow all
-        if(this.filters.size === 0)
-            return true
-
-        // Has filter but no category on action => Forbid
-        if(action.categories.length === 0)
-            return true
-
-        // Has matching category and filter => All
-        for(const category of action.categories)
-        {
-            if(this.filters.has(category))
-                return true
-        }
-
-        // Otherwise => Forbid
-        return false
-    }
-
-    start(key: string, value: number = 1, isToggle: boolean = true)
-    {
-        const filteredActions = [...this.actions.values()].filter((_action) => _action.keys.indexOf(key) !== - 1)
-
-        for(const action of filteredActions)
-        {
-            if(action && this.checkCategory(action))
-            {
-                action.value = value
-                action.activeKeys.add(key)
-                action.trigger = 'start'
-
-                // Can be active or inactive => trigger event only on change
-                if(isToggle)
-                {
-                    if(!action.active)
-                    {
-                        action.active = true
-
-                        this.events.trigger('actionStart', [ action ])
-                        this.events.trigger(action.name, [ action ])
-                    }
-                }
-
-                // Trigger event whenever action starts (no "end")
-                else
-                {
-                    this.events.trigger('actionStart', [ action ])
-                    this.events.trigger(action.name, [ action ])
-                }
-            }
-        }
-    }
-
-    end(key: string, value: number = 0)
-    {
-        const filteredActions = [...this.actions.values()].filter((_action) => _action.keys.indexOf(key) !== - 1)
-
-        for(const action of filteredActions)
-        {
-            if(action && action.active)
-            {
-                action.activeKeys.delete(key)
-
-                if(action.activeKeys.size === 0)
-                {
-                    action.active = false
-                    action.value = value
-                    action.trigger = 'end'
-
-                    this.events.trigger('actionEnd', [ action ])
-                    this.events.trigger(action.name, [ action ])
-                }
-            }
-        }
-    }
-
-    change(key: string, value: number = 1)
-    {
-        const filteredActions = [...this.actions.values()].filter((_action) => _action.keys.indexOf(key) !== - 1)
-
-        for(const action of filteredActions)
-        {
-            if(action && this.checkCategory(action))
-            {
-                action.value = value
-
-                if(action.active)
-                {
-                    this.events.trigger('actionChange', [ action ])
-                    this.events.trigger(action.name, [ action ])
-                }
-                else
-                {
-                    action.active = true
-
-                    this.events.trigger('actionStart', [ action ])
-                    this.events.trigger(action.name, [ action ])
-                }
-            }
-        }
-    }
-
-    setInteractiveButtons()
-    {
-        this.interactiveButtons = new InteractiveButtons()
-    }
-
-    setNipple()
-    {
-        this.nipple = new Nipple()
-        this.addActions([
-            { name: 'nipplePointer', categories: [ 'wandering', 'racing' ], keys: [ 'Pointer.any' ] },
-        ])
-
-        this.events.on('nipplePointer', (action) =>
-        {
-            if(this.mode !== Inputs.MODE_TOUCH)
-                return
-
-            this.nipple.updateFromPointer(this.pointer, action)
-        })
-    }
-
-    addActions(actions)
-    {
-        for(const action of actions)
-        {
-            const formatedAction = {...action}
-            formatedAction.active = false
-            formatedAction.value = 0
-            formatedAction.trigger = null
-            formatedAction.activeKeys = new Set()
-
-            this.actions.set(action.name, formatedAction)
-        }
-    }
-
-    checkCategory(action)
-    {
-        // No filter => Allow all
-        if(this.filters.size === 0)
-            return true
-
-        // Has filter but no category on action => Forbid
-        if(action.categories.length === 0)
-            return true
-
-        // Has matching category and filter => All
-        for(const category of action.categories)
-        {
-            if(this.filters.has(category))
-                return true
-        }
-
-        // Otherwise => Forbid
-        return false
-    }
-
-    start(key: string, value: number = 1, isToggle: boolean = true)
-    {
-        const filteredActions = [...this.actions.values()].filter((_action) => _action.keys.indexOf(key) !== - 1)
-
-        for(const action of filteredActions)
-        {
-            if(action && this.checkCategory(action))
-            {
-                action.value = value
-                action.activeKeys.add(key)
-                action.trigger = 'start'
-
-                // Can be active or inactive => trigger event only on change
-                if(isToggle)
-                {
-                    if(!action.active)
-                    {
-                        action.active = true
-
-                        this.events.trigger('actionStart', [ action ])
-                        this.events.trigger(action.name, [ action ])
-                    }
-                }
-
-                // Trigger event whenever action starts (no "end")
-                else
-                {
-                    this.events.trigger('actionStart', [ action ])
-                    this.events.trigger(action.name, [ action ])
-                }
-            }
-        }
-    }
-
-    end(key: string, value: number = 0)
-    {
-        const filteredActions = [...this.actions.values()].filter((_action) => _action.keys.indexOf(key) !== - 1)
-
-        for(const action of filteredActions)
-        {
-            if(action && action.active)
-            {
-                action.activeKeys.delete(key)
-
-                if(action.activeKeys.size === 0)
-                {
-                    action.active = false
-                    action.value = value
-                    action.trigger = 'end'
-
-                    this.events.trigger('actionEnd', [ action ])
-                    this.events.trigger(action.name, [ action ])
-                }
-            }
-        }
-    }
-
-    change(key, value = 1)
-    {
-        const filteredActions = [...this.actions.values()].filter((_action) => _action.keys.indexOf(key) !== - 1)
-
-        for(const action of filteredActions)
-        {
-            if(action && this.checkCategory(action))
-            {
                 // Test if value has changed
                 // - number => Direct comparaison
                 // - object => Every property comparaison
@@ -627,7 +320,7 @@ export class Inputs
         }
     }
 
-    updateMode(mode)
+    updateMode(mode: number)
     {
         if(mode === this.mode)
             return
