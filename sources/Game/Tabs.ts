@@ -1,59 +1,52 @@
 import { Game } from './Game.js'
 
-interface TabItem {
-    name: string
-    navigationElement: HTMLElement
-    contentElement: HTMLElement
-    innerElement: HTMLElement
-}
+export class Tabs
+{
+    game!: Game
+    element!: HTMLElement
+    items!: {
+        navigationContainer: HTMLElement | null
+        navigationItems: HTMLElement[]
+        contentContainer: HTMLElement | null
+        contentItems: HTMLElement[]
+        list: Map<string, any>
+        current: any
+    }
 
-interface TabsItems {
-    navigationContainer: HTMLElement
-    navigationItems: HTMLElement[]
-    contentContainer: HTMLElement
-    contentItems: HTMLElement[]
-    list: Map<string, TabItem>
-    current: TabItem | null
-}
-
-export class Tabs {
-    game: Game
-    element: HTMLElement
-    items!: TabsItems
-
-    constructor(element: HTMLElement) {
+    constructor(element: HTMLElement)
+    {
         this.game = Game.getInstance()
         this.element = element
+        this.items = {} as any
 
         this.setItems()
         // this.setResize()
     }
 
-    setItems(): void {
-        this.items = {
-            navigationContainer: this.element.querySelector('.js-tabs-navigation') as HTMLElement,
-            navigationItems: [ ...this.items.navigationContainer.querySelectorAll('.js-tabs-navigation-item') ] as HTMLElement[],
-            contentContainer: this.element.querySelector('.js-tabs-content') as HTMLElement,
-            contentItems: [ ...this.items.contentContainer.querySelectorAll('.js-tabs-content-item') ] as HTMLElement[],
-            list: new Map<string, TabItem>(),
-            current: null
-        }
+    setItems()
+    {
+        this.items = {} as any
 
-        let defaultItem: TabItem | null = null
+        this.items.navigationContainer = this.element.querySelector('.js-tabs-navigation')
+        this.items.navigationItems = Array.from(this.items.navigationContainer?.querySelectorAll('.js-tabs-navigation-item') || []) as any
+        this.items.contentContainer = this.element.querySelector('.js-tabs-content')
+        this.items.contentItems = Array.from(this.items.contentContainer?.querySelectorAll('.js-tabs-content-item') || []) as any
 
-        for(const navigationElement of this.items.navigationItems) {
-            const name = navigationElement.dataset.tabsName as string
-            const contentElement = this.items.contentItems.find(element => element.classList.contains(name)) as HTMLElement
-            const innerElement = contentElement.querySelector('.js-tabs-content-inner') as HTMLElement
+        this.items.list = new Map()
+        this.items.current = null
 
-            const item: TabItem = {
-                name,
-                navigationElement: navigationElement as HTMLElement,
-                contentElement,
-                innerElement
-            }
+        let defaultItem = null
 
-            item.navigationElement.addEventListener('click', () => {
+        for(const navigationElement of this.items.navigationItems)
+        {
+            const item: any = {}
+            item.name = navigationElement.dataset.tabsName
+            item.navigationElement = navigationElement
+            item.contentElement = this.items.contentItems.find((element: Element) => element.classList.contains(item.name))
+            item.innerElement = item.contentElement?.querySelector('.js-tabs-content-inner')
+
+            item.navigationElement.addEventListener('click', () =>
+            {
                 this.goTo(item.name)
             })
 
@@ -88,7 +81,7 @@ export class Tabs {
     //     this.items.list.forEach((item) =>
     //     {
     //         const bounding = item.innerElement.getBoundingClientRect()
-
+            
     //         if(bounding.height > height)
     //             height = bounding.height
     //     })
@@ -99,7 +92,8 @@ export class Tabs {
     //     }
     // }
 
-    goTo(itemName: string): void {
+    goTo(itemName: string)
+    {
         // Same
         if(itemName === this.items.current?.name)
             return
@@ -112,13 +106,13 @@ export class Tabs {
         // Old content
         if(this.items.current)
         {
-            this.items.current.contentElement.classList.remove('is-active')
-            this.items.current.navigationElement.classList.remove('is-active')
+            this.items.current.contentElement?.classList.remove('is-active')
+            this.items.current.navigationElement?.classList.remove('is-active')
         }
 
         // New content
         this.items.current = contentItem
-        this.items.current.contentElement.classList.add('is-active')
-        this.items.current.navigationElement.classList.add('is-active')
+        this.items.current.contentElement?.classList.add('is-active')
+        this.items.current.navigationElement?.classList.add('is-active')
     }
 }

@@ -2,6 +2,16 @@ import { Game } from './Game.js'
 
 export class Title
 {
+    game!: Game
+    interval = 1/60
+    lastTime = 0
+    offset = 0
+    offsetRounded = 0
+    index = 0
+    length = 30
+    carPosition = 10
+    objectInterval = 18
+
     constructor()
     {
         this.game = Game.getInstance()

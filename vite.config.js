@@ -32,17 +32,20 @@ export default defineConfig({
             transform(code, id) {
                 if (id.endsWith('.ts') && !id.includes('node_modules')) {
                     try {
-                        const result = typescript.transform(code, [], {}, {
-                            module: 'ES2020',
-                            moduleResolution: 'node',
-                            target: 'ES2020',
-                            strict: true,
-                            esModuleInterop: true,
-                            skipLibCheck: true
+                        const result = typescript.transpileModule(code, {
+                            compilerOptions: {
+                                module: 'ES2020',
+                                moduleResolution: 'node',
+                                target: 'ES2020',
+                                strict: true,
+                                esModuleInterop: true,
+                                skipLibCheck: true,
+                                noEmit: true
+                            }
                         })
                         return {
-                            code: result.code,
-                            map: result.map
+                            code: result.outputText,
+                            map: result.sourceMap
                         }
                     } catch (e) {
                         console.error(`Error compiling ${id}:`, e)

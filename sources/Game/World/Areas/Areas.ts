@@ -34,7 +34,7 @@ export class Areas
     {
         this.game = Game.getInstance()
 
-        const list = [
+        const list: [ string, any ][] = [
             [ 'achievements', AchievementsArea ],
             [ 'altar', AltarArea ],
             [ 'behindTheScene', BehindTheSceneArea ],
