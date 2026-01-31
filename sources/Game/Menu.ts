@@ -1,8 +1,16 @@
 import { Events } from './Events.js'
-import { Game } from './Game.js'
 import { Inputs } from './Inputs/Inputs.js'
 import { Tabs } from './Tabs.js'
 import { CircuitArea } from './World/Areas/CircuitArea.js'
+import { Debug } from './Debug.js'
+
+declare class Game {
+    world: any
+    inputs: Inputs
+    audio: any
+    debug: Debug
+    static getInstance(): Game
+}
 
 export class Menu
 {
@@ -11,22 +19,25 @@ export class Menu
     static CLOSED = 3
     static CLOSING = 4
 
-    private game: Game
-    public state: number
-    private element: HTMLElement | null
-    private current: any
-    private default: any
-    public events: Events
-    private items: Map<string, any>
-    public navigationElement: HTMLElement | null
-    public previewElement: HTMLElement | null
-    public contentElement: HTMLElement | null
-    public mainFocus: HTMLElement | null
-    public tabs: any
+    private game: Game | null = null
+    public state: number = Menu.CLOSED
+    private element: HTMLElement | null = null
+    private current: any = null
+    private default: any = null
+    public events!: Events
+    private items!: Map<string, any>
+    public navigationElement: HTMLElement | null = null
+    public previewElement: HTMLElement | null = null
+    public contentElement: HTMLElement | null = null
+    public mainFocus: HTMLElement | null = null
+    public tabs: any = null
 
     constructor()
     {
-        this.game = Game.getInstance()
+        const game = Game.getInstance()
+        if(!game) return
+
+        this.game = game
         this.state = Menu.CLOSED
         this.element = document.querySelector('.js-menu')
         this.current = null
@@ -40,10 +51,11 @@ export class Menu
         this.setGamepad()
         this.preopen()
 
-        this.element.addEventListener('transitionend', () =>
-        {
-            this.onTransitionEnded()
-        })
+        if(this.element)
+            this.element.addEventListener('transitionend', () =>
+            {
+                this.onTransitionEnded()
+            })
     }
 
     onTransitionEnded()
@@ -54,7 +66,7 @@ export class Menu
             this.events.trigger('opened')
             this.current.events.trigger('opened')
         }
-        else if(this.state === Menu.CLOSING)
+        else if(this.state === Menu.CLOSING && this.element)
         {
             this.state = Menu.CLOSED
             this.events.trigger('closed')
@@ -74,10 +86,14 @@ export class Menu
         {
             event.preventDefault()
 
-            if(this.game.world.areas?.circuit?.state === CircuitArea.STATE_RUNNING || this.game.world.areas?.circuit?.state === CircuitArea.STATE_STARTING)
-                this.open('circuit')
-            else
-                this.open()
+            if(this.game && this.game.world)
+            {
+                const areas = this.game.world.areas
+                if(areas?.circuit?.state === CircuitArea.STATE_RUNNING || areas?.circuit?.state === CircuitArea.STATE_STARTING)
+                    this.open('circuit')
+                else
+                    this.open()
+            }
         })
         element.addEventListener('keydown', (event: Event) =>
         {
@@ -108,33 +124,35 @@ export class Menu
 
     setItems()
     {
-        const navigationElement = this.element.querySelector('.js-navigation')
-        const previewElement = this.element.querySelector('.js-previews')
-        const contentElement = this.element.querySelector('.js-contents')
+        const navigationElement = this.element?.querySelector('.js-navigation')
+        const previewElement = this.element?.querySelector('.js-previews')
+        const contentElement = this.element?.querySelector('.js-contents')
         this.items = new Map()
+
+        if(!navigationElement || !previewElement || !contentElement) return
 
         const navigationElements = navigationElement.querySelectorAll('.js-navigation-item')
         const previewElements = [...previewElement.querySelectorAll('.js-preview')]
         const contentElements = [...contentElement.querySelectorAll('.js-content')]
 
-        for(const navigationElement of navigationElements)
+        for(const navElement of navigationElements)
         {
-            const item = {}
-            item.navigationElement = navigationElement
-            item.name = item.navigationElement.dataset.name
+            const item: any = {}
+            item.navigationElement = navElement as HTMLElement
+            item.name = (navElement as HTMLElement).dataset.name || ''
             item.previewElement = previewElements.find(element => element.classList.contains(`${item.name}-preview`))
             item.contentElement = contentElements.find(element => element.classList.contains(`${item.name}-content`))
-            item.mainFocus = item.contentElement.querySelector('.js-main-focus')
+            item.mainFocus = item.contentElement?.querySelector('.js-main-focus')
             item.isOpen = false
             item.events = new Events()
 
             // Tabs
-            const tabsElement = item.contentElement.querySelector('.js-tabs')
+            const tabsElement = item.contentElement?.querySelector('.js-tabs')
 
             if(tabsElement)
                 item.tabs = new Tabs(tabsElement)
 
-            item.navigationElement.addEventListener('click', (event) =>
+            navElement.addEventListener('click', (event: Event) =>
             {
                 event.preventDefault()
 
@@ -162,34 +180,36 @@ export class Menu
 
     setGamepad()
     {
-        this.game.inputs.addActions([
-            { name: 'next', categories: [ 'menu' ], keys: [ 'Gamepad.r1' ] },
-            { name: 'prev', categories: [ 'menu' ], keys: [ 'Gamepad.l1' ] }
-        ])
-
-        // Respawn
-        this.game.inputs.events.on('next', (action: any) =>
+        if(this.game && this.game.inputs)
         {
-            if(action.active)
-            {
-                this.open(this.current.nextName)
-            }
-        })
-        this.game.inputs.events.on('prev', (action: any) =>
-        {
-            if(action.active)
-            {
-                this.open(this.current.prevName)
-            }
-        })
+            this.game.inputs.addActions([
+                { name: 'next', categories: [ 'menu' ], keys: [ 'Gamepad.r1' ] },
+                { name: 'prev', categories: [ 'menu' ], keys: [ 'Gamepad.l1' ] }
+            ])
 
+            // Respawn
+            this.game.inputs.events.on('next', (action: any) =>
+            {
+                if(action.active && this.current)
+                {
+                    this.open(this.current.nextName)
+                }
+            })
+            this.game.inputs.events.on('prev', (action: any) =>
+            {
+                if(action.active && this.current)
+                {
+                    this.open(this.current.prevName)
+                }
+            })
+        }
     }
 
-    open(name = null)
+    open(name: string | null = null)
     {
-        let _name = name
+        let _name: string = name || ''
 
-        if(_name === null)
+        if(_name === null || _name === '')
         {
             if(this.current)
                 _name = this.current.name
@@ -211,7 +231,7 @@ export class Menu
             return
 
         // Sound
-        const sound = this.game.audio.groups.get('click')
+        const sound = this.game?.audio?.groups.get('click')
         if(sound)
             sound.play(true)
 
@@ -238,7 +258,7 @@ export class Menu
         // if(item.tabs)
         //     item.tabs.resize()
 
-        if(item.mainFocus && this.game.inputs.mode !== Inputs.MODE_TOUCH)
+        if(item.mainFocus && this.game?.inputs?.mode !== Inputs.MODE_TOUCH)
         {
             requestAnimationFrame(() =>
             {
@@ -247,8 +267,11 @@ export class Menu
         }
 
         // Input filters
-        this.game.inputs.filters.clear()
-        this.game.inputs.filters.add('menu')
+        if(this.game?.inputs)
+        {
+            this.game.inputs.filters.clear()
+            this.game.inputs.filters.add('menu')
+        }
 
         // Events
         this.events.trigger('open')
@@ -259,14 +282,23 @@ export class Menu
         {
             this.state = Menu.OPENING
 
-            this.element.classList.add('is-displayed')
-            requestAnimationFrame(() =>
+            if(this.element)
             {
+                this.element.classList.add('is-displayed')
                 requestAnimationFrame(() =>
                 {
-                    this.element.classList.add('is-visible')
+                    if(this.element)
+                    {
+                        requestAnimationFrame(() =>
+                        {
+                            if(this.element)
+                            {
+                                this.element.classList.add('is-visible')
+                            }
+                        })
+                    }
                 })
-            })
+            }
         }
     }
 
@@ -276,11 +308,11 @@ export class Menu
             return
 
         // Sound
-        const sound = this.game.audio.groups.get('click')
+        const sound = this.game?.audio?.groups.get('click')
         if(sound)
             sound.play(false)
 
-        this.element.classList.remove('is-visible')
+        this.element?.classList.remove('is-visible')
 
         this.state = Menu.CLOSING
         this.events.trigger('close')
@@ -290,7 +322,7 @@ export class Menu
 
     preopen()
     {
-        if(this.game.debug.active)
+        if(this.game?.debug && this.game.debug.active)
             return
 
         this.items.forEach((item) =>
