@@ -44,8 +44,10 @@ import { Quality } from './Quality.js'
 import { Menu } from './Menu.js'
 import { Title } from './Title.js'
 import { PreRenderer } from './PreRenderer.js'
-import Options from './Options.js'
+import { Options } from './Options.js'
 import Map from './Map.js'
+
+
 
 export class Game
 {
@@ -76,7 +78,7 @@ export class Game
     menu: Menu | undefined
     rendering: Rendering | undefined
     resources: any
-    options: typeof Options | undefined
+    options: Options | undefined
     respawns: Respawns | undefined
     view: typeof View | undefined
     reveal: Reveal | undefined
@@ -251,5 +253,82 @@ export class Game
         {
             this.achievements.setProgress('debug', 1)
         }
+    }
+
+    reset()
+    {
+        const interactiveButtons = (this.inputs as any).interactiveButtons
+        if (interactiveButtons) {
+            interactiveButtons.clearItems()
+        }
+
+        const player = this.player
+        if (!player) return
+
+        player.respawn(null, () =>
+        {
+            const objects = this.objects
+            if (!objects) return
+
+            objects.resetAll()
+
+            const world = this.world
+            if (world) {
+                if ((world as any).explosiveCrates) {
+                    (world as any).explosiveCrates.reset()
+                }
+
+                const areas = (world as any).areas
+                if (areas) {
+                    const bowling = areas.bowling
+                    if (bowling) {
+                        bowling.restart()
+                    }
+
+                    const cookie = areas.cookie
+                    if (cookie && cookie.cookies) {
+                        cookie.cookies.instancedGroup.needsUpdate = true
+                    }
+
+                    const toilet = areas.toilet
+                    if (toilet && toilet.cabin) {
+                        toilet.cabin.down = false
+                    }
+
+                    const social = areas.social
+                    if (social) {
+                        social.statue.down = false
+                        if (social.fans) {
+                            social.fans.instancedGroup.needsUpdate = true
+                        }
+                    }
+                }
+
+                const benches = (world as any).benches
+                if (benches && benches.instancedGroup) {
+                    benches.instancedGroup.needsUpdate = true
+                }
+
+                const fences = (world as any).fences
+                if (fences && fences.instancedGroup) {
+                    fences.instancedGroup.needsUpdate = true
+                }
+
+                const bricks = (world as any).bricks
+                if (bricks && bricks.instancedGroup) {
+                    bricks.instancedGroup.needsUpdate = true
+                }
+
+                const lanterns = (world as any).lanterns
+                if (lanterns && lanterns.instancedGroup) {
+                    lanterns.instancedGroup.needsUpdate = true
+                }
+            }
+
+            gsap.delayedCall(2, () =>
+            {
+                this.achievements.setProgress('reset', 1)
+            })
+        })
     }
 }

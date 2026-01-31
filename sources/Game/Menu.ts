@@ -25,7 +25,7 @@ export class Menu
     private current: any = null
     private default: any = null
     public events!: Events
-    private items!: Map<string, any>
+    protected items!: Map<string, any>
     public navigationElement: HTMLElement | null = null
     public previewElement: HTMLElement | null = null
     public contentElement: HTMLElement | null = null
