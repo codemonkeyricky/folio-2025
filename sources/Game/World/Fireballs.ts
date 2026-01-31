@@ -23,16 +23,16 @@ export class Fireballs
         this.emissiveStrength = uniform(8)
 
         // Debug
-        if(this.game.debug.active)
+        if(this.game.debug?.active)
         {
-            this.debugPanel = this.game.debug.panel.addFolder({
+            this.debugPanel = (this.game.debug.panel as any)?.addFolder({
                 title: '🔥 Fireballs',
                 expanded: false,
             })
 
-            this.game.debug.addThreeColorBinding(this.debugPanel, this.emissiveColorA.value, 'emissiveColorA')
-            this.game.debug.addThreeColorBinding(this.debugPanel, this.emissiveColorB.value, 'emissiveColorB')
-            this.debugPanel.addBinding(this.emissiveStrength, 'value', { label: 'emissiveStrength', min: 0, max: 20, step: 0.1 })
+            this.game.debug?.addThreeColorBinding(this.debugPanel, this.emissiveColorA.value, 'emissiveColorA')
+            this.game.debug?.addThreeColorBinding(this.debugPanel, this.emissiveColorB.value, 'emissiveColorB')
+            this.debugPanel?.add(this.emissiveStrength, 'value', { label: 'emissiveStrength', min: 0, max: 20, step: 0.1 })
         }
 
     }
@@ -76,7 +76,7 @@ export class Fireballs
             emissiveColor.mulAssign(this.emissiveStrength)
 
             // Goo
-            const gooColor = this.game.fog.strength.mix(vec3(0), this.game.fog.color) // Fog
+            const gooColor = (this.game.fog?.strength || uniform(0)).mix(vec3(0), this.game.fog?.color || uniform(vec3(0))) // Fog
 
             // Mix
             const gooMask = step(noise, 0.1)
@@ -94,7 +94,10 @@ export class Fireballs
         mesh.rotation.reorder('XYZ')
         mesh.rotation.x = Math.random() * Math.PI * 2
         mesh.rotation.y = Math.random() * Math.PI * 2
-        this.game.scene.add(mesh)
+        if(this.game.scene)
+        {
+            this.game.scene.add(mesh)
+        }
 
         // Animate
         const scale = { value: 0 }
@@ -103,7 +106,10 @@ export class Fireballs
         gsap.fromTo(progress, { value: 0.15 }, { value: 1, duration: 2, delay: 0.25, ease: 'linear' })
 
         // Trigger explosion
-        this.game.explosions.explode(coordinates, explosionRadius, 8)
+        if(this.game.explosions)
+        {
+            this.game.explosions.explode(coordinates, explosionRadius, 8)
+        }
 
         // Dispose
         gsap.delayedCall(2.25, () =>
