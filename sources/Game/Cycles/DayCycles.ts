@@ -24,25 +24,26 @@ export class DayCycles extends Cycles
     getKeyframesDescriptions(): any[][]
     {
         // Debug
-        if(this.game.debug.active)
+        if(this.game?.debug?.active)
         {
-            this.debugPanel.addBinding(this, 'duration', { min: 1, max: 60 * 10, step: 1 })
+            const pane = this.debugPanel as any
+            pane.addBinding(this, 'duration', { min: 1, max: 60 * 10, step: 1 })
 
             for(const presetKey in presets)
             {
                 const preset = presets[presetKey as keyof typeof presets]
-                const presetsDebugPanel = this.debugPanel.addFolder({
+                const presetsDebugPanel = pane.addFolder({
                     title: presetKey,
                     expanded: true,
                 })
 
-                this.game.debug.addThreeColorBinding(presetsDebugPanel, preset.revealColor, 'revealColor')
+                const debug = this.game.debug as any
+                debug.addThreeColorBinding(presetsDebugPanel, preset.revealColor, 'revealColor')
                 presetsDebugPanel.addBinding(preset, 'revealIntensity', { min: 0, max: 20, step: 0.001 })
-                this.game.debug.addThreeColorBinding(presetsDebugPanel, preset.lightColor, 'lightColor')
+                debug.addThreeColorBinding(presetsDebugPanel, preset.lightColor, 'lightColor')
                 presetsDebugPanel.addBinding(preset, 'lightIntensity', { min: 0, max: 20 })
-                this.game.debug.addThreeColorBinding(presetsDebugPanel, preset.shadowColor, 'shadowColor')
-                this.game.debug.addThreeColorBinding(presetsDebugPanel, preset.fogColorA, 'fogColorA')
-                this.game.debug.addThreeColorBinding(presetsDebugPanel, preset.fogColorB, 'fogColorB')
+                debug.addThreeColorBinding(presetsDebugPanel, preset.shadowColor, 'shadowColor')
+                debug.addThreeColorBinding(presetsDebugPanel, preset.fogColorA, 'fogColorA')
                 presetsDebugPanel.addBinding(preset, 'fogNearRatio', { label: 'near', min: -2, max: 2, step: 0.001 })
                 presetsDebugPanel.addBinding(preset, 'fogFarRatio', { label: 'far', min: -2, max: 2, step: 0.001 })
             }

@@ -261,8 +261,103 @@ declare module './Trails.js' {
     export default module
 }
 declare module './View.js' {
-    const module: any
-    export default module
+    export const View: any
+    export default View
+}
+
+declare module './Tracks.js' {
+    export const Tracks: any
+    export default Tracks
+}
+
+declare module './Lighting.js' {
+    export const Lighting: any
+    export default Lighting
+}
+
+declare module './Materials.js' {
+    export const Materials: any
+    export default Materials
+}
+
+declare module './Weather.js' {
+    export const Weather: any
+    export default Weather
+}
+
+declare module './Noises.js' {
+    export const Noises: any
+    export default Noises
+}
+
+declare module './Server.js' {
+    export const Server: any
+    export default Server
+}
+
+declare module './Overlay.js' {
+    export const Overlay: any
+    export default Overlay
+}
+
+declare module './Tornado.js' {
+    export const Tornado: any
+    export default Tornado
+}
+
+declare module './InteractivePoints.js' {
+    export const InteractivePoints: any
+    export default InteractivePoints
+}
+
+declare module './Audio.js' {
+    export const Audio: any
+    export default Audio
+}
+
+declare module './RayCursor.js' {
+    export const RayCursor: any
+    export default RayCursor
+}
+
+declare module './Achievements.js' {
+    export const Achievements: any
+    export default Achievements
+}
+
+declare module './Notifications.js' {
+    export const Notifications: any
+    export default Notifications
+}
+
+declare module './Options.js' {
+    export const Options: any
+    export default Options
+}
+
+declare module './Map.js' {
+    export const Map: any
+    export default Map
+}
+
+declare module './Gamepad.js' {
+    export const Gamepad: any
+    export default Gamepad
+}
+
+declare module './Pointer.js' {
+    export const Pointer: any
+    export default Pointer
+}
+
+declare module './InteractiveButtons.js' {
+    export const InteractiveButtons: any
+    export default InteractiveButtons
+}
+
+declare module './Nipple.js' {
+    export const Nipple: any
+    export default Nipple
 }
 declare module './Viewport.ts' {
     const module: any
@@ -561,6 +656,136 @@ declare module './utilities/time.js' {
     export default module
 }
 declare module "./Reveal.js" {
+    export const module: any
+    export default module
+}
+
+declare module './Lighting.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Weather.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Noises.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Server.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Overlay.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Tornado.js' {
+    export const module: any
+    export default module
+}
+
+declare module './InteractivePoints.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Audio.js' {
+    export const module: any
+    export default module
+}
+
+declare module './RayCursor.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Achievements.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Notifications.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Options.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Map.js' {
+    export const module: any
+    export default module
+}
+
+declare module './Lighting.js' {
+    const module: any
+    export default module
+}
+
+declare module './Weather.js' {
+    const module: any
+    export default module
+}
+
+declare module './Noises.js' {
+    const module: any
+    export default module
+}
+
+declare module './Server.js' {
+    const module: any
+    export default module
+}
+
+declare module './Overlay.js' {
+    const module: any
+    export default module
+}
+
+declare module './Tornado.js' {
+    const module: any
+    export default module
+}
+
+declare module './InteractivePoints.js' {
+    const module: any
+    export default module
+}
+
+declare module './Audio.js' {
+    const module: any
+    export default module
+}
+
+declare module './RayCursor.js' {
+    const module: any
+    export default module
+}
+
+declare module './Achievements.js' {
+    const module: any
+    export default module
+}
+
+declare module './Notifications.js' {
+    const module: any
+    export default module
+}
+
+declare module './Options.js' {
+    const module: any
+    export default module
+}
+
+declare module './Map.js' {
     const module: any
     export default module
 }

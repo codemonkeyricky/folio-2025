@@ -23,7 +23,15 @@ export class Explosions
         this.game.view.roll.kick(rollKickStrength)
 
         // Leaves
-        this.game.world.leaves?.explode(coordinates, radius)
+        const world = this.game.world as any
+        if(world && 'leaves' in world)
+        {
+            const leaves = world.leaves as any
+            if(leaves && 'explode' in leaves)
+            {
+                leaves.explode(coordinates, radius)
+            }
+        }
 
         // Objects physics
         const applyPhysicsExplosion = (physicalObject: any) =>
@@ -42,26 +50,38 @@ export class Explosions
             impulse.normalize()
 
             const finalStrength = fadedStrength * strength
-            
+
             impulse.setLength(finalStrength * physicalObject.body.mass())
 
             if(fadedStrength > 0)
             {
                 // const point = direction.negate().setLength(0).add(position)
                 const point = position
-                this.game.ticker.wait(1, () =>
+                const ticker = this.game.ticker as any
+                if(ticker && 'wait' in ticker)
                 {
-                    physicalObject.body.applyImpulseAtPoint(impulse, point, true)
-                })
+                    ticker.wait(1, () =>
+                    {
+                        physicalObject.body.applyImpulseAtPoint(impulse, point, true)
+                    })
+                }
 
                 // Is vehicle
-                if(physicalObject === this.game.physicalVehicle.chassis.physical)
+                const vehicle = this.game.physicalVehicle as any
+                if(vehicle && 'chassis' in vehicle && 'physical' in vehicle.chassis)
                 {
-                    if(finalStrength > bulletTimeStrengthThreshold)
+                    if(physicalObject === vehicle.chassis.physical)
                     {
-                        this.game.time.bulletTime.activate()
+                        if(finalStrength > bulletTimeStrengthThreshold)
+                        {
+                            const time = this.game.time as any
+                            if(time && 'bulletTime' in time && 'activate' in time.bulletTime)
+                            {
+                                time.bulletTime.activate()
+                            }
 
-                        return true
+                            return true
+                        }
                     }
                 }
             }
@@ -71,13 +91,25 @@ export class Explosions
 
         let vehicleHit = false
         if(vehicleOnly)
-            vehicleHit = applyPhysicsExplosion(this.game.physicalVehicle.chassis.physical)
-        else
-            this.game.objects.list.forEach((object: any) =>
+        {
+            const vehicle = this.game.physicalVehicle as any
+            if(vehicle && 'chassis' in vehicle && 'physical' in vehicle.chassis)
             {
-                if(object.physical && object.physical.type === 'dynamic' && object.physical.body.isEnabled())
-                    vehicleHit = vehicleHit || applyPhysicsExplosion(object.physical)
-            })
+                vehicleHit = applyPhysicsExplosion(vehicle.chassis.physical)
+            }
+        }
+        else
+        {
+            const objects = this.game.objects as any
+            if(objects && 'list' in objects && objects.list)
+            {
+                objects.list.forEach((object: any) =>
+                {
+                    if(object.physical && object.physical.type === 'dynamic' && object.physical.body.isEnabled())
+                        vehicleHit = vehicleHit || applyPhysicsExplosion(object.physical)
+                })
+            }
+        }
         // console.log('vehicleHit', vehicleHit)
 
         return vehicleHit

@@ -17,7 +17,7 @@ export class Fog
     constructor()
     {
         this.game = Game.getInstance()
-        
+
         this.colorA = uniform(color('#ff0000'))
         this.colorB = uniform(color('#0000ff'))
         this.radialCenter = uniform(vec2(0, 0))
@@ -26,36 +26,45 @@ export class Fog
 
         const colorMix = vec2(viewportUV.xy).sub(this.radialCenter).length().smoothstep(this.radialStart, this.radialEnd)
         this.color = mix(this.colorA, this.colorB, colorMix)
-        this.game.scene.backgroundNode = this.color
+        if(this.game.scene)
+        {
+            this.game.scene.backgroundNode = this.color
+        }
 
-        this.near = uniform(this.game.view.optimalArea.nearDistance)
-        this.far = uniform(this.game.view.optimalArea.farDistance)
+        this.near = uniform(this.game.view?.optimalArea?.nearDistance ?? 0)
+        this.far = uniform(this.game.view?.optimalArea?.farDistance ?? 1)
         this.strength = rangeFogFactor(this.near, this.far)
         // this.strength = float(1)
 
-        this.game.ticker.events.on('tick', () =>
+        if(this.game.ticker?.events)
         {
-            this.update()
-        }, 10)
+            this.game.ticker.events.on('tick', () =>
+            {
+                this.update()
+            }, 10)
+        }
 
         // Debug
-        if(this.game.debug.active)
+        if(this.game.debug?.active)
         {
-            const debugPanel = this.game.debug.panel.addFolder({
+            const debugPanel = this.game.debug.panel?.addFolder?.({
                 title: '☁️ Fog',
                 expanded: false,
             })
-            debugPanel.addBinding(this.radialCenter, 'value', { value: 'offset', min: 0, max: 1 })
+            if(debugPanel)
+            {
+                debugPanel.addBinding(this.radialCenter, 'value', { value: 'offset', min: 0, max: 1 })
+            }
         }
     }
 
     update()
     {
         // Apply day cycles values
-        const amplitude = this.game.view.optimalArea.farDistance - this.game.view.optimalArea.nearDistance
-        this.colorA.value.copy(this.game.dayCycles.properties.fogColorA.value)
-        this.colorB.value.copy(this.game.dayCycles.properties.fogColorB.value)
-        this.near.value = this.game.view.optimalArea.nearDistance + this.game.dayCycles.properties.fogNearRatio.value * amplitude
-        this.far.value = this.game.view.optimalArea.nearDistance + this.game.dayCycles.properties.fogFarRatio.value * amplitude
+        const amplitude = (this.game.view?.optimalArea?.farDistance ?? 0) - (this.game.view?.optimalArea?.nearDistance ?? 0)
+        this.colorA.value.copy(this.game.dayCycles?.properties.fogColorA.value)
+        this.colorB.value.copy(this.game.dayCycles?.properties.fogColorB.value)
+        this.near.value = (this.game.view?.optimalArea?.nearDistance ?? 0) + this.game.dayCycles?.properties.fogNearRatio.value * amplitude
+        this.far.value = (this.game.view?.optimalArea?.nearDistance ?? 0) + this.game.dayCycles?.properties.fogFarRatio.value * amplitude
     }
 }

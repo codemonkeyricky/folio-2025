@@ -3,6 +3,7 @@ import { Game } from "../Game.js"
 import { lerp, smoothstep } from "../utilities/maths.js"
 import { Events } from "../Events.js"
 import gsap from 'gsap'
+import { Pane } from 'tweakpane'
 
 export class Cycles
 {
@@ -18,7 +19,7 @@ export class Cycles
     punctualEvents: Map<string, { name: string, progress: number }>
     intervalEvents: Map<string, { name: string, startProgress: number, endProgress: number, inInterval: boolean }>
     events: Events
-    debugPanel: any
+    debugPanel!: Pane
     newAbsoluteProgressBinding: any
     override: any
     values: any
@@ -26,14 +27,6 @@ export class Cycles
     constructor(name = 'Cycles', duration = 10, forcedProgress: number | null = null, manual = false)
     {
         this.game = Game.getInstance()
-
-        if(this.game.debug.active)
-        {
-            this.debugPanel = this.game.debug.panel.addFolder({
-                title: name,
-                expanded: false,
-            })
-        }
 
         this.name = name
         this.duration = duration
@@ -47,33 +40,46 @@ export class Cycles
         this.intervalEvents = new Map()
         this.events = new Events()
 
+        if(this.game?.debug?.active && this.game.debug.panel && 'addFolder' in this.game.debug.panel)
+        {
+            const pane = this.game.debug.panel as any
+            this.debugPanel = pane.addFolder({
+                title: name,
+                expanded: false,
+            })
+        }
+
         // Debug
-        this.newAbsoluteProgressBinding = this.game.debug.addManualBinding(
-            this.debugPanel,
-            this,
-            'newAbsoluteProgress',
-            {
-                view: 'cameraring',
-                series: 0,
-                unit: {
-                    pixels: 100,
-                    ticks: 4,
-                    value: 1,
-                    step: 0.001
+        if(this.game.debug?.addManualBinding && this.debugPanel)
+        {
+            const debug = this.game.debug as any
+            this.newAbsoluteProgressBinding = debug.addManualBinding(
+                this.debugPanel,
+                this,
+                'newAbsoluteProgress',
+                {
+                    view: 'cameraring',
+                    series: 0,
+                    unit: {
+                        pixels: 100,
+                        ticks: 4,
+                        value: 1,
+                        step: 0.001
+                    },
                 },
-            },
-            () =>
-            {
-                return forcedProgress !== null ? forcedProgress : ((new Date()).getTime() / 1000 / this.duration)
-            },
-            manual
-        )
+                () =>
+                {
+                    return forcedProgress !== null ? forcedProgress : ((new Date()).getTime() / 1000 / this.duration)
+                },
+                manual
+            )
+        }
 
         this.setKeyframes()
         this.setOverride()
         this.setIntervals()
 
-        this.game.ticker.events.on('tick', () =>
+        this.game.ticker?.events.on('tick', () =>
         {
             this.update()
         }, 8)
@@ -160,7 +166,8 @@ export class Cycles
     update(firstFrame: boolean = false)
     {
         // New absolute progress
-        this.newAbsoluteProgressBinding.update()
+        if(this.newAbsoluteProgressBinding)
+            this.newAbsoluteProgressBinding.update()
         this.progressDelta = this.newAbsoluteProgress - this.absoluteProgress // Delta
         this.absoluteProgress = this.newAbsoluteProgress
 
@@ -173,7 +180,7 @@ export class Cycles
             if(newProgress >= punctualEvent.progress && this.progress < punctualEvent.progress)
             {
                 if(firstFrame)
-                    this.game.ticker.wait(1, () =>
+                    this.game.ticker?.wait(1, () =>
                     {
                         this.events.trigger(punctualEvent.name)
                     })
@@ -191,7 +198,7 @@ export class Cycles
             {
                 intervalEvent.inInterval = true
                 if(firstFrame)
-                    this.game.ticker.wait(1, () =>
+                    this.game.ticker?.wait(1, () =>
                     {
                         this.events.trigger(intervalEvent.name, [ intervalEvent.inInterval ])
                     })
@@ -202,7 +209,7 @@ export class Cycles
             {
                 intervalEvent.inInterval = false
                 if(firstFrame)
-                    this.game.ticker.wait(1, () =>
+                    this.game.ticker?.wait(1, () =>
                     {
                         this.events.trigger(intervalEvent.name, [ intervalEvent.inInterval ])
                     })

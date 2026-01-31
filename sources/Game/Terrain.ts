@@ -7,8 +7,7 @@ interface ColorInfo {
     value: string;
 }
 
-export class Terrain
-{
+export class Terrain {
     private readonly game: Game;
     private readonly subdivision: number;
     readonly size: number;
@@ -20,15 +19,13 @@ export class Terrain
     terrainNode!: any;
     colorNode!: any;
 
-    constructor()
-    {
+    constructor() {
         this.game = Game.getInstance();
 
         this.subdivision = 128;
         this.size = 192;
 
-        if(this.game.debug.active)
-        {
+        if (this.game.debug.active) {
             this.debugPanel = this.game.debug.panel.addFolder({
                 title: '🏔️ Terrain Data',
                 expanded: false,
@@ -38,14 +35,12 @@ export class Terrain
         this.setGradient();
         this.setNodes();
 
-        this.game.ticker.events.on('tick', () =>
-        {
+        this.game.ticker.events.on('tick', () => {
             this.update();
         }, 10);
     }
 
-    private setGradient()
-    {
+    private setGradient() {
         const height = 16;
 
         const canvas = document.createElement('canvas');
@@ -56,7 +51,7 @@ export class Terrain
         this.gradientTexture.colorSpace = THREE.SRGBColorSpace;
 
         const context = canvas.getContext('2d');
-        if(!context) return;
+        if (!context) return;
 
         this.colors = [
             { stop: 0.1, value: '#ffa94e' },
@@ -64,10 +59,9 @@ export class Terrain
             { stop: 0.9, value: '#13375f' },
         ];
 
-        const update = () =>
-        {
+        const update = () => {
             const gradient = context.createLinearGradient(0, 0, 0, height);
-            for(const color of this.colors)
+            for (const color of this.colors)
                 gradient.addColorStop(color.stop, color.value);
 
             context.fillStyle = gradient;
@@ -77,28 +71,23 @@ export class Terrain
 
         update();
 
-        if(this.game.debug.active)
-        {
-            for(const color of this.colors)
-            {
+        if (this.game.debug.active) {
+            for (const color of this.colors) {
                 this.debugPanel.addBinding(color, 'stop', { min: 0, max: 1, step: 0.001 }).on('change', update);
                 this.debugPanel.addBinding(color, 'value', { view: 'color' }).on('change', update);
             }
         }
     }
 
-    private setNodes()
-    {
+    private setNodes() {
         this.grassColorUniform = uniform(color('#b8b62e'));
         this.tracksDelta = uniform(vec2(0));
 
-        const worldPositionToUvNode = Fn(([position]) =>
-        {
+        const worldPositionToUvNode = Fn(([position]) => {
             return position.div(this.subdivision).div(1.5).add(0.5);
         });
 
-        this.terrainNode = Fn(([position]) =>
-        {
+        this.terrainNode = Fn(([position]) => {
             const textureUv = worldPositionToUvNode(position);
             const data = texture(this.game.resources.terrainTexture, textureUv);
 
@@ -111,8 +100,7 @@ export class Terrain
             return data;
         });
 
-        this.colorNode = Fn(([terrainData]) =>
-        {
+        this.colorNode = Fn(([terrainData]) => {
             const baseColor = texture(this.gradientTexture, vec2(0, terrainData.b.oneMinus()));
 
             baseColor.assign(mix(baseColor, this.grassColorUniform, terrainData.g));
@@ -120,14 +108,12 @@ export class Terrain
             return baseColor.rgb;
         });
 
-        if(this.game.debug.active)
-        {
+        if (this.game.debug.active) {
             this.game.debug.addThreeColorBinding(this.debugPanel, this.grassColorUniform.value, 'grassColor');
         }
     }
 
-    private update()
-    {
+    private update() {
         this.tracksDelta.value.set(
             this.game.tracks.focusPoint.x,
             this.game.tracks.focusPoint.y
