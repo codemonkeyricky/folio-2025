@@ -4,10 +4,17 @@ import { Game } from './Game.js'
 
 export class Zones
 {
-    game: Game
-    items: any[]
-    previewGroup: THREE.Group
-    debugPanel: any
+    game!: Game
+    items!: Array<{
+        type: string
+        position: THREE.Vector3 | THREE.Vector2
+        radius: number
+        isIn: boolean
+        events: Events
+        preview?: THREE.Mesh
+    }>
+    previewGroup!: THREE.Group
+    debugPanel?: any
 
     constructor()
     {
@@ -35,9 +42,9 @@ export class Zones
         }
     }
 
-    create(type: string = 'sphere', position: THREE.Vector3, radius: number)
+    create(type = 'sphere', position: THREE.Vector3 | THREE.Vector2, radius: number)
     {
-        const zone = { type, position, radius, isIn: false } as any
+        const zone: any = { type, position, radius, isIn: false }
         zone.events = new Events()
         this.items.push(zone)
 
@@ -62,7 +69,7 @@ export class Zones
             if(zone.type === 'cylinder')
             {
                 playerPosition = new THREE.Vector2(playerPosition.x, playerPosition.z)
-                zonePosition = new THREE.Vector2(zonePosition.x, zonePosition.z)
+                zonePosition = new THREE.Vector2(zonePosition.x, (zonePosition as THREE.Vector3).z)
             }
             const distance = playerPosition.distanceTo(zonePosition)
 
