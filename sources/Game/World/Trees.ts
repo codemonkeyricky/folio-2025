@@ -48,6 +48,8 @@ export class Trees {
 
         this.setModelParts()
         this.setBodies()
+        this.setLeaves()
+        this.setPhysical()
     }
 
     setModelParts() {
