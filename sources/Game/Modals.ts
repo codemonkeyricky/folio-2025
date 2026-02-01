@@ -13,6 +13,8 @@ export class Modals
     public state: number
     private element: HTMLElement | null
     private current: any
+    private pending: string | null
+    private default: any
     public events: Events
     private items: Map<string, any>
 
@@ -22,9 +24,12 @@ export class Modals
         this.state = Modals.CLOSED
         this.element = document.querySelector('.js-modals')
         this.current = null
+        this.pending = null
+        this.default = null
         this.events = new Events()
         this.items = new Map()
 
+        this.setClose()
         this.setItems()
         this.preopen()
 
@@ -49,14 +54,25 @@ export class Modals
             this.events.trigger('closed')
             if(this.current)
             {
+                if(this.current.events)
+                    this.current.events.trigger('closed')
                 if(this.current.element)
                     this.current.element.classList.remove('is-displayed')
                 this.current = null
             }
 
-            // Fully hide
-            if(this.element)
-                this.element.classList.remove('is-displayed')
+            // Pending => Open pending
+            if(this.pending)
+            {
+                this.open(this.pending)
+                this.pending = null
+            }
+            // No pending => Fully hide
+            else
+            {
+                if(this.element)
+                    this.element.classList.remove('is-displayed')
+            }
         }
     }
 
@@ -86,27 +102,14 @@ export class Modals
             if(tabsElement)
                 item.tabs = new Tabs(tabsElement as HTMLElement)
 
-            const datasetDefault = (element as HTMLElement).dataset.default as unknown as string | undefined
             if(name && typeof name === 'string') {
                 this.items.set(name, item)
             }
 
-            let hasDefault = false
-            if(datasetDefault != null && typeof datasetDefault === 'string' && datasetDefault !== '') {
-                hasDefault = true
+            // Check if this is the default modal
+            if((element as HTMLElement).dataset.default !== undefined) {
+                this.default = item
             }
-            if(hasDefault) {
-                (this as any).default = item
-            } else {
-                (this as any).default = null
-            }
-
-            const sound = this.game.audio?.groups?.get('click')
-            if(sound)
-                sound.play(true)
-
-            this.element?.classList.add('is-displayed')
-            item.element?.classList.add('is-displayed')
         }
     }
 
@@ -120,6 +123,7 @@ export class Modals
         {
             element.addEventListener('click', () =>
             {
+                this.pending = null
                 this.close()
             })
         }
@@ -127,7 +131,10 @@ export class Modals
         this.element.addEventListener('click', (event: MouseEvent) =>
         {
             if(event.target === this.element)
+            {
+                this.pending = null
                 this.close()
+            }
         })
     }
 
@@ -138,13 +145,19 @@ export class Modals
         if(!item)
             return
 
-        // Already visible
+        // Already visible => Set pending
         if(this.state === Modals.OPEN || this.state === Modals.OPENING)
         {
             if(item === this.current)
                 return
 
+            this.pending = name
             this.close()
+        }
+        // Already closing => Set (or change) pending
+        else if(this.state === Modals.CLOSING)
+        {
+            this.pending = name
         }
         // Currently closed => Open immediately
         else if(this.state === Modals.CLOSED)
@@ -180,9 +193,7 @@ export class Modals
                 this.game.inputs.filters.add('modal')
             }
 
-            if(item) {
-                item.isOpen = true
-            }
+            item.isOpen = true
             this.events.trigger('open')
             item.events?.trigger('open')
         }
@@ -204,6 +215,11 @@ export class Modals
         this.current.isOpen = false
         this.events.trigger('close')
         this.current?.events?.trigger('close')
+
+        // Clear modal filter when closing
+        if(this.game.inputs?.filters) {
+            this.game.inputs.filters.clear()
+        }
     }
 
     preopen()
